@@ -4,13 +4,15 @@
 
 int main()
 {
-    const char treowTraht[1024] = "Hello, World!";
-    char mithenTraht[1024];
-    char h;
-    char staef;
+    const char trueText[200] = "Hello, World!";
+    char hiddenText[200];
+    char r; //'r' for rotation
+    char l; //'l' for letter
     
-    printf("%s\n", treowTraht);
+    printf("%s\n", trueText);
     
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 200; i++) {
+        hiddenText[i] = trueText[i];             
     }
+    printf("%s", hiddenText);
 }
