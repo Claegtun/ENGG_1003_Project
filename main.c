@@ -2,8 +2,11 @@
 #include<stdlib.h>
 #include<math.h>
 
+int count(char *x);
+
 int main()
 {
+    
     const char trueText[200] = "HELLO, WORLD!";
     char hiddenText[200];
     char r; //'r' for rotation
@@ -13,7 +16,15 @@ int main()
     
     for (int i = 0; i < 200; i++) {
         hiddenText[i] = trueText[i];   
-        hiddenText[i]++;
     }
-    printf("%s", hiddenText);
+    printf("%d", count(hiddenText));
 }
+
+int count(char *x) {
+    int n = 0;
+    while (x[n] != 0) {
+        n++;
+    }
+    return n - 1;
+}
+
