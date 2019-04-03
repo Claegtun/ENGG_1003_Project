@@ -10,19 +10,24 @@ int length(char *x); //returns the length of string 'x'
 int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to upper case and requires length 'n'
 int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
 
-//>>>---------> Main o-{=========- (sword)
+//>>>---------> Main o-{=========-
 int main()
 {
-    char text0[200] = "VXEPDULQHV WR GRFN DW DQWZHUS DW WZHQWB KXQGUHG KRXUV RYHU";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
+    const char text0[200] = "SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
     char text1[200];
+    const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";
+    char AB[26];
     int r = 3; //'r' for rotater; N.B. it is overwritten in 2 for S
     int n; //length
-    int S = 2; 
+    int S = 3; 
     /*S: Action:
       0  rotational encryption
       1  rotational decryption with key 
-      2  rotational decryption without key by frequency of 'T'*/
+      2  rotational decryption without key by frequency of 'T'
+      3  substitutional encryption with known key*/
     
+    //Breaking the key
+    strcpy(AB, key);
     //Encrpytion
     switch(S) {
         case 0:
@@ -68,8 +73,27 @@ int main()
             }
             printf("%c\n", M);
             
-            r = M - 'T';
+            r = M - 'E';
             rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
+            printf("%s", text1);
+            break;
+        case 3: 
+            printf("%s\n", text0);
+            strcpy(text1, text0);
+            n = length(text1);
+            upperCase(text1, n);
+            printf("%s\n", text1);
+            int lu;
+            
+            for (int i = 0; i < n; i++) {
+                lu = text1[i];
+                int u;
+                if ((lu >= 'A') && (lu <= 'Z')) {
+                    u = (int)lu - 65;                    
+                    lu = AB[u];
+                }  
+            text1[i] = lu;
+            }    
             printf("%s", text1);
             break;
         default:
@@ -85,7 +109,7 @@ int length(char *x) {
     while (x[n] != 0) {
         n++;
     }
-    return n; //returns the number of chars including the \0
+    return n; //returns the number of char.
 }
 
 int upperCase(char *x, int n) {
