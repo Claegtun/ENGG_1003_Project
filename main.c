@@ -13,14 +13,15 @@ int rotation(char *x, int r, int n); //rotates each alphabetical char. of string
 //>>>---------> Main o-{=========- (sword)
 int main()
 {
-    char text0[200] = "KHOOR, ZRUOG!";
+    char text0[200] = "VXEPDULQHV WR GRFN DW DQWZHUS DW WZHQWB KXQGUHG KRXUV RYHU";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
     char text1[200];
-    int r = 3; //'r' for rotation
+    int r = 3; //'r' for rotater; N.B. it is overwritten in 2 for S
     int n; //length
-    int S = 1; 
+    int S = 2; 
     /*S: Action:
       0  rotational encryption
-      1  rotational decryption */
+      1  rotational decryption with key 
+      2  rotational decryption without key by frequency of 'T'*/
     
     //Encrpytion
     switch(S) {
@@ -39,7 +40,36 @@ int main()
             n = length(text1);
             upperCase(text1, n);
             printf("%s\n", text1);
-            rotation(text1, 26 - r, n);
+            rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
+            printf("%s", text1);
+            break;
+        case 2:
+            printf("%s\n", text0);
+            strcpy(text1, text0);
+            n = length(text1);
+            upperCase(text1, n);
+            printf("%s\n", text1);
+            
+            char l; //'l' for letter to be tested
+            int f; //'f' for frequency of the letter
+            int m = 0; //'m' for maximum frequency of a letter
+            char M = 'A'; //letter, that has the maxmimum frequency 
+            for (l = 'A'; l <= 'Z'; l++) {
+                f = 0;
+                for (int i = 0; i < n; i++) {
+                    if (text1[i] == l) {
+                        f++;
+                    }        
+                }
+                if (f >= m) {
+                    m = f;
+                    M = l;
+                }
+            }
+            printf("%c\n", M);
+            
+            r = M - 'T';
+            rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
             printf("%s", text1);
             break;
         default:
