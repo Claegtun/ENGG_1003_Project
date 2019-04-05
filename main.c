@@ -1,23 +1,28 @@
-//>>>---------> Libraries
+//>>>---------> >>>---------> Libraries
+
 #include<stdio.h>
 #include<stdlib.h>
-#include<math.h>
 #include<string.h>
 
-//>>>---------> Functions' prototypes
+
+//>>>---------> >>>---------> Functions' prototypes
+
 //One should see definitions for returning flags
 int length(char *x); //returns the length of string 'x'
 int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to upper case and requires length 'n'
 int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
 int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y'
 
-//>>>---------> Main
+
+//>>>---------> >>>---------> Main
+
 int main()
 {
+    //Declaration of variables
     const char text0[200] = "SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
     char text1[200];//the modifying string for the text
     const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";
-    char AB[26]; //the modifying string for the key
+    char AB[26]; //the substituting alphabet
     int r = 3; //'r' for rotater; N.B. it is overwritten, when S=2
     int n; //length
     int S = 3; 
@@ -87,6 +92,16 @@ int main()
             substitution(text1, AB, n);    
             printf("%s", text1);
             break;
+        case 4:
+            strcpy(AB, key);
+            printf("%s\n", text0);
+            strcpy(text1, text0);
+            n = length(text1);
+            upperCase(text1, n);
+            printf("%s\n", text1);
+            substitution(text1, AB, n);    
+            printf("%s", text1);
+            break;
         default:
             printf("Invalid S");
     }
@@ -94,7 +109,9 @@ int main()
     
 }
 
-//>>>---------> Functions' denfinitions
+
+//>>>---------> >>>---------> Functions' denfinitions
+
 int length(char *x) {
     int n = 0; //length
     while (x[n] != 0) {
@@ -113,7 +130,7 @@ int upperCase(char *x, int n) {
         }  
         x[i] = l;
     }  
-    return f; //returns 1, if rotation occured at all; returns 0 otherwise
+    return f; //returns 1, if any modification occured at all; returns 0 otherwise
 }
 
 int rotation(char *x, int r, int n) {
@@ -130,7 +147,7 @@ int rotation(char *x, int r, int n) {
         }  
         x[i] = l;
     }    
-    return f; //returns 1, if modification occured at all; returns 0 otherwise
+    return f; //returns 1, if any rotation occured at all; returns 0 otherwise
 }
 
 int substitution(char *x, char *y, int n) {
@@ -146,7 +163,7 @@ int substitution(char *x, char *y, int n) {
         }  
         x[i] = l;
     } 
-    return f; //returns 1, if modification occured at all; returns 0 otherwise
+    return f; //returns 1, if substitution occured at all; returns 0 otherwise
 }
 
 
