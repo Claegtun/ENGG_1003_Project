@@ -9,25 +9,25 @@
 int length(char *x); //returns the length of string 'x'
 int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to upper case and requires length 'n'
 int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
+int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y'
 
-//>>>---------> Main o-{=========-
+//>>>---------> Main
 int main()
 {
     const char text0[200] = "SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
-    char text1[200];
+    char text1[200];//the modifying string for the text
     const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";
-    char AB[26];
-    int r = 3; //'r' for rotater; N.B. it is overwritten in 2 for S
+    char AB[26]; //the modifying string for the key
+    int r = 3; //'r' for rotater; N.B. it is overwritten, when S=2
     int n; //length
     int S = 3; 
     /*S: Action:
       0  rotational encryption
       1  rotational decryption with key 
       2  rotational decryption without key by frequency of 'T'
-      3  substitutional encryption with known key*/
+      3  substitutional encryption with known key
+      4  substitutional decryption with known key*/
     
-    //Breaking the key
-    strcpy(AB, key);
     //Encrpytion
     switch(S) {
         case 0:
@@ -73,27 +73,18 @@ int main()
             }
             printf("%c\n", M);
             
-            r = M - 'E';
+            r = M - 'T';
             rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
             printf("%s", text1);
             break;
         case 3: 
+            strcpy(AB, key);
             printf("%s\n", text0);
             strcpy(text1, text0);
             n = length(text1);
             upperCase(text1, n);
             printf("%s\n", text1);
-            int lu;
-            
-            for (int i = 0; i < n; i++) {
-                lu = text1[i];
-                int u;
-                if ((lu >= 'A') && (lu <= 'Z')) {
-                    u = (int)lu - 65;                    
-                    lu = AB[u];
-                }  
-            text1[i] = lu;
-            }    
+            substitution(text1, AB, n);    
             printf("%s", text1);
             break;
         default:
@@ -141,3 +132,85 @@ int rotation(char *x, int r, int n) {
     }    
     return f; //returns 1, if modification occured at all; returns 0 otherwise
 }
+
+int substitution(char *x, char *y, int n) {
+    char l; //'l' for letter
+    int il; //integer of 'l'
+    int f = 0; //'f' for flag
+    for (int i = 0; i < n; i++) {
+        l = x[i];
+        if ((l >= 'A') && (l <= 'Z')) {
+            il = (int)l - 65;
+            l = y[il];
+            f = 1;
+        }  
+        x[i] = l;
+    } 
+    return f; //returns 1, if modification occured at all; returns 0 otherwise
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Verification of uniqueness
+ *      ________
+ *     /  ____  \
+ *    / /      \ \                         =========
+ *   | |        | |=======================|  _   _  |}
+ *   | |        | |=======================| |_| |_| |}
+ *    \ \ ____ / /                        |+ _ + _ +|
+ *     \________/                         | | | | | |
+ *                                        |_| |_| |_| 
+ * 
+ * - Clayton John Carlon 2019
+ * 
+ *  
+ */
