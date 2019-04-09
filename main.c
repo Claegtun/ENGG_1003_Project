@@ -11,7 +11,8 @@
 int length(char *x); //returns the length of string 'x'
 int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to upper case and requires length 'n'
 int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
-int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y'
+int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y' and requires length 'n'
+int decryptingAB(char *x, char *y); //makes an alphabet, i.e. 'y', for decrypting from the encrypting alphabet, i.e. 'x' and requires length 'n'
 
 
 //>>>---------> >>>---------> Main
@@ -19,19 +20,21 @@ int substitution(char *x, char *y, int n); //substitutes an element of string 'x
 int main()
 {
     //Declaration of variables
-    const char text0[200] = "SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
+    const char text0[200] = "UMATQYCGSU JB XBZF QJ QGJISYN QJ JISGJL DMGXYSX DBMYU BKSY";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
     char text1[200];//the modifying string for the text
-    const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";
-    char AB[26]; //the substituting alphabet
+    const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";//QAZXSWEDCVFRTGBNHYUJMKIOLP
+    char AB[26]; //the encrytping alphabet
+    char dAB[26]; //the decrypting alphabet BOIHGKNQWTVYUPXZALEMSJFDRC
     int r = 3; //'r' for rotater; N.B. it is overwritten, when S=2
     int n; //length
-    int S = 3; 
+    int S = 4; 
     /*S: Action:
       0  rotational encryption
       1  rotational decryption with key 
       2  rotational decryption without key by frequency of 'T'
       3  substitutional encryption with known key
-      4  substitutional decryption with known key*/
+      4  substitutional decryption with known key
+    */
     
     //Encrpytion
     switch(S) {
@@ -99,7 +102,9 @@ int main()
             n = length(text1);
             upperCase(text1, n);
             printf("%s\n", text1);
-            substitution(text1, AB, n);    
+            decryptingAB(AB, dAB);
+            printf("%s\n", dAB);
+            substitution(text1, dAB, n);    
             printf("%s", text1);
             break;
         default:
@@ -166,7 +171,20 @@ int substitution(char *x, char *y, int n) {
     return f; //returns 1, if substitution occured at all; returns 0 otherwise
 }
 
-
+int decryptingAB(char *x, char *y) {
+    char l; //'l' for letter
+    int il; //integer of 'l'
+    int f = 0; //'f' for flag
+    for (int i = 0; i < 26; i++) {
+        l = x[i];
+        if ((l >= 'A') && (l <= 'Z')) {
+            il = (int)l - 65;
+            y[il] = (char)(i + 65);
+            f = 1;
+        }
+    }
+    return f; //returns 1, if any conversion occured at all; returns 0 otherwise
+}
 
 
 
