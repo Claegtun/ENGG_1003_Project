@@ -28,6 +28,7 @@ int main()
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26]; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
+    char mC[5] = "ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
     int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
     int S; //the setting of the action
@@ -89,23 +90,23 @@ int main()
                 upperCase(word, n);
                 strcat(text, word);
             }
-            printf("%s\n", text);
             
             n = length(text);
             M = mostCommon(text, n);
             printf("%c\n", M);
-            r = (int)(M - 'T');
             
             fseek(input, 1, SEEK_SET);
             
-            while (!feof(input)) {
-                fscanf(input, "%s", word);
-                n = length(word);
-                upperCase(word, n);
-                rotation(word, 26 - r, n);
-                printf("%s ", word);   
+            for (int i = 0; i < 5; i++) {
+                r = (int)(M - mC[i]);
+                while (!feof(input)) {
+                    fscanf(input, "%s", word);
+                    n = length(word);
+                    upperCase(word, n);
+                    rotation(word, 26 - r, n);
+                    printf("%s ", word);   
+                }
             }
-            
             break;
         case 3: 
             fscanf(input, "%26s", sKey);
