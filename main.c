@@ -21,8 +21,8 @@ int main()
 {
     //Declaration of variables
     char setting[1]; //the character defining the setting as a header 
-    char text0[200] = "UMATQYCGSU JB XBZF QJ QGJISYN QJ JISGJL DMGXYSX DBMYU BKSY"; //"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
-    char text1[200]; //the modifying string for the text
+    char text0[1000]; //"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
+    char text1[1000] = ""; //the modifying string for the text
     char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26]; //the encrytping alphabet
@@ -80,12 +80,18 @@ int main()
             }
             break;
         case 2:
-            printf("%s\n", text0);
-            strcpy(text1, text0);
-            n = length(text1);
-            upperCase(text1, n);
+            fscanf(input, "%2s", rKey);
+            r = atoi(rKey);
+            printf("%d\n", r);
+            while (!feof(input)) {
+                fscanf(input, "%s", text0);
+                n = length(text0);
+                upperCase(text0, n);
+                strcat(text1, text0);
+            }
             printf("%s\n", text1);
             
+            n = length(text1);
             char l; //'l' for letter to be tested
             int f; //'f' for frequency of the letter
             int m = 0; //'m' for maximum frequency of a letter
@@ -103,10 +109,6 @@ int main()
                 }
             }
             printf("%c\n", M);
-            
-            r = M - 'T';
-            rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
-            printf("%s", text1);
             break;
         case 3: 
             fscanf(input, "%26s", sKey);
