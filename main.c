@@ -20,14 +20,16 @@ int decryptingAB(char *x, char *y); //makes an alphabet, i.e. 'y', for decryptin
 int main()
 {
     //Declaration of variables
-    const char text0[200] = "UMATQYCGSU JB XBZF QJ QGJISYN QJ JISGJL DMGXYSX DBMYU BKSY";//"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
-    char text1[200];//the modifying string for the text
-    const char key[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP";//QAZXSWEDCVFRTGBNHYUJMKIOLP
+    char setting[1]; //the character defining the setting as a header 
+    char text0[200] = "UMATQYCGSU JB XBZF QJ QGJISYN QJ JISGJL DMGXYSX DBMYU BKSY"; //"SUBMARINES TO DOCK AT ANTWERP AT TWENTY HUNDRED HOURS OVER";
+    char text1[200]; //the modifying string for the text
+    char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
+    char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26]; //the encrytping alphabet
-    char dAB[26]; //the decrypting alphabet BOIHGKNQWTVYUPXZALEMSJFDRC
-    int r = 3; //'r' for rotater; N.B. it is overwritten, when S=2
+    char dAB[26]; //the decrypting alphabet
+    int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
-    int S = 4; 
+    int S; //the setting of the action
     /*S: Action:
       0  rotational encryption
       1  rotational decryption with key 
@@ -36,25 +38,46 @@ int main()
       4  substitutional decryption with known key
     */
     
+    //Beginning of files
+    FILE *input;
+    input = fopen("input.txt", "r");
+    if (input == NULL) { //this ends the program, if there is nothing in the file
+        perror("fopen()");
+        return 0;
+    }
+    
+    //Finding the setting
+    fscanf(input, "%1s", setting);
+    S = atoi(setting);
+    printf("%d\n", S);
+    
     //Encrpytion
     switch(S) {
         case 0:
-            printf("%s\n", text0);
-            strcpy(text1, text0);
-            n = length(text1);
-            upperCase(text1, n);
-            printf("%s\n", text1);
-            rotation(text1, r, n);
-            printf("%s", text1);   
+            fscanf(input, "%2s", rKey);
+            r = atoi(rKey);
+            printf("%d\n", r);
+            while (!feof(input)) {
+                fscanf(input, "%s", text0);
+                strcpy(text1, text0);
+                n = length(text1);
+                upperCase(text1, n);
+                rotation(text1, r, n);
+                printf("%s", text1);   
+            }
             break;
         case 1:
-            printf("%s\n", text0);
-            strcpy(text1, text0);
-            n = length(text1);
-            upperCase(text1, n);
-            printf("%s\n", text1);
-            rotation(text1, 26 - r, n); //the rotater is the key subtracted from 26
-            printf("%s", text1);
+            fscanf(input, "%2s", rKey);
+            r = atoi(rKey);
+            printf("%d\n", r);
+            while (!feof(input)) {
+                fscanf(input, "%s", text0);
+                strcpy(text1, text0);
+                n = length(text1);
+                upperCase(text1, n);
+                rotation(text1, 26 - r, n);
+                printf("%s", text1);   
+            }
             break;
         case 2:
             printf("%s\n", text0);
@@ -86,7 +109,7 @@ int main()
             printf("%s", text1);
             break;
         case 3: 
-            strcpy(AB, key);
+            strcpy(AB, sKey);
             printf("%s\n", text0);
             strcpy(text1, text0);
             n = length(text1);
@@ -96,7 +119,7 @@ int main()
             printf("%s", text1);
             break;
         case 4:
-            strcpy(AB, key);
+            strcpy(AB, sKey);
             printf("%s\n", text0);
             strcpy(text1, text0);
             n = length(text1);
@@ -109,9 +132,7 @@ int main()
             break;
         default:
             printf("Invalid S");
-    }
-    
-    
+    }   
 }
 
 
