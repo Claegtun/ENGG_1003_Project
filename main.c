@@ -63,7 +63,7 @@ int main()
                 n = length(text1);
                 upperCase(text1, n);
                 rotation(text1, r, n);
-                printf("%s", text1);   
+                printf("%s ", text1);   
             }
             break;
         case 1:
@@ -76,7 +76,7 @@ int main()
                 n = length(text1);
                 upperCase(text1, n);
                 rotation(text1, 26 - r, n);
-                printf("%s", text1);   
+                printf("%s ", text1);   
             }
             break;
         case 2:
@@ -109,26 +109,31 @@ int main()
             printf("%s", text1);
             break;
         case 3: 
+            fscanf(input, "%26s", sKey);
+            printf("%s\n", sKey);
             strcpy(AB, sKey);
-            printf("%s\n", text0);
-            strcpy(text1, text0);
-            n = length(text1);
-            upperCase(text1, n);
-            printf("%s\n", text1);
-            substitution(text1, AB, n);    
-            printf("%s", text1);
+            while (!feof(input)) {
+                fscanf(input, "%s", text0);
+                strcpy(text1, text0);
+                n = length(text1);
+                upperCase(text1, n);
+                substitution(text1, AB, n);    
+                printf("%s ", text1);  
+            }
             break;
         case 4:
+            fscanf(input, "%26s", sKey);
+            printf("%s\n", sKey);
             strcpy(AB, sKey);
-            printf("%s\n", text0);
-            strcpy(text1, text0);
-            n = length(text1);
-            upperCase(text1, n);
-            printf("%s\n", text1);
-            decryptingAB(AB, dAB);
-            printf("%s\n", dAB);
-            substitution(text1, dAB, n);    
-            printf("%s", text1);
+            while (!feof(input)) {
+                fscanf(input, "%s", text0);
+                strcpy(text1, text0);
+                n = length(text1);
+                upperCase(text1, n);
+                decryptingAB(AB, dAB);
+                substitution(text1, dAB, n);    
+                printf("%s ", text1);  
+            }
             break;
         default:
             printf("Invalid S");
