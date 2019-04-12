@@ -13,8 +13,8 @@ int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to 
 int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
 int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y' and requires length 'n'
 char mostCommon(char *x, int n);
-int decryptingAB(char *x, char *y); //makes an alphabet, i.e. 'y', for decrypting from the encrypting alphabet, i.e. 'x' and requires length 'n'
-
+int decryptingAB(char *x, char *y); //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
+int omission(char *x, int n); //omits any punctuation or non-Latin character at the end of a string 'x'
 
 //>>>---------> >>>---------> Main
 
@@ -23,6 +23,7 @@ int main()
     //Declaration of variables
     char setting[1]; //the character defining the setting as a header 
     char word[1000]; //a word from the text
+    char entry[1000]; //an entry from the list
     char text[1000] = ""; //the text
     char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
@@ -45,6 +46,13 @@ int main()
     FILE *input;
     input = fopen("input.txt", "r");
     if (input == NULL) { //this ends the program, if there is nothing in the file
+        perror("fopen()");
+        return 0;
+    }
+    
+    FILE *list;
+    list = fopen("list.txt", "r");
+    if (list == NULL) { //this ends the program, if there is nothing in the file
         perror("fopen()");
         return 0;
     }
@@ -84,27 +92,43 @@ int main()
             break;
         //Rotational decryption without key by frequency
         case 2:
+            //Flattening the text into one string
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
                 upperCase(word, n);
                 strcat(text, word);
             }
-            
+            //Getting the most common letter from which
             n = length(text);
             M = mostCommon(text, n);
             printf("%c\n", M);
             
-            fseek(input, 1, SEEK_SET);
-            
+            //Trial for each common letter
             for (int i = 0; i < 5; i++) {
-                r = (int)(M - mC[i]);
+                fseek(input, 27, SEEK_SET); //beginning the cursor
+                r = 0;//(int)(M - mC[i]); //the new rotator
+                //
                 while (!feof(input)) {
+                    //Decryption by r
                     fscanf(input, "%s", word);
                     n = length(word);
                     upperCase(word, n);
-                    rotation(word, 26 - r, n);
-                    printf("%s ", word);   
+                    rotation(word, 26 - r, n);  
+                    //Omission of punctuation at the end
+                    omission(word, n);
+                    //Trial by spelling
+                    printf("%s\n", word);
+                    while (!feof(list)) {
+                        fseek(input, 0, SEEK_SET);
+                        fscanf(list, "%s", entry);
+                        if (!strcmp(word, entry)) {
+                            int errors = 0;
+                            for (int i = 0; i < n; i++) {
+                                error =    
+                            }
+                        }
+                    }
                 }
             }
             break;
@@ -232,6 +256,16 @@ char mostCommon(char *x, int n) {
     return M;
 }
 
+int omission(char *x, int n) {
+    char y[1000] = ""; //temporary string
+    int f = 0; //'f' for flag
+    if ((x[n-1] < 'A') || (x[n-1] > 'Z')) {
+        strxfrm(y, x, n-1);
+        strcpy(x, y);
+        f = 1;
+    }
+    return f; //returns 1, if there was a non-Latin character at the end; returns 0 otherwise
+}
 
 
 
