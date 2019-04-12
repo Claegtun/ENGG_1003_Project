@@ -15,6 +15,7 @@ int substitution(char *x, char *y, int n); //substitutes an element of string 'x
 char mostCommon(char *x, int n);
 int decryptingAB(char *x, char *y); //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
 int omission(char *x, int n); //omits any punctuation or non-Latin character at the end of a string 'x'
+int trial(char *x, int n); //returns 1, if the string 'x' is contain in the list of common English words; returns 0 otherwise; requries length 'n'
 
 //>>>---------> >>>---------> Main
 
@@ -23,17 +24,17 @@ int main()
     //Declaration of variables
     char setting[1]; //the character defining the setting as a header 
     char word[1000]; //a word from the text
-    char entry[1000]; //an entry from the list
-    char text[1000] = ""; //the text
+    char text[10000] = ""; //the text
     char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26]; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
-    char mC[5] = "ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
+    char mC[6] = "ZETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
     int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
     int S; //the setting of the action
-    char M; //Most common letter
+    char M; //the most common letter
+    char B = ' '; //the best letter
     /*S: Action:
       0  rotational encryption
       1  rotational decryption with key 
@@ -41,18 +42,11 @@ int main()
       3  substitutional encryption with known key
       4  substitutional decryption with known key
     */
-    
+   
     //Beginning of files
     FILE *input;
     input = fopen("input.txt", "r");
     if (input == NULL) { //this ends the program, if there is nothing in the file
-        perror("fopen()");
-        return 0;
-    }
-    
-    FILE *list;
-    list = fopen("list.txt", "r");
-    if (list == NULL) { //this ends the program, if there is nothing in the file
         perror("fopen()");
         return 0;
     }
@@ -82,6 +76,7 @@ int main()
             fscanf(input, "%2s", rKey);
             r = atoi(rKey);
             printf("%d\n", r);
+            iDoNotCareWhatTheySayAboutGOTO: //If thou dost not like GOTO, then avaunt thou!
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
@@ -99,19 +94,20 @@ int main()
                 upperCase(word, n);
                 strcat(text, word);
             }
+            
             //Getting the most common letter from which
             n = length(text);
             M = mostCommon(text, n);
             printf("%c\n", M);
             
             //Trial for each common letter
-            int w; //'w' for the number of words
-            int englishWords; //the number of English words
-            for (int i = 0; i < 1; i++) {
+            for (int i = 1; i < 6; i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor
-                r = 0;//(int)(M - mC[i]); //the new rotator
-                w = 0;
-                englishWords = 0;
+                r = (int)(M - mC[i]); //the new rotator
+                int w = 0; //'w' for the number of words
+                int englishWords = 0; //the number of English words
+                float englishness; //the percentage of English words in the text
+                float highest; //the highest percentage yet
                 while (!feof(input)) {
                     w++;
                     //Decryption by r
@@ -122,24 +118,18 @@ int main()
                     //Omission of punctuation at the end
                     omission(word, n);
                     //Trial by spelling
-                    fseek(list, 0, SEEK_SET);
-                    while (!feof(list)) {
-                        fscanf(list, "%s", entry);
-                        upperCase(entry, length(entry));
-                        if (!strcmp(word, entry)) {
-                            int errors = 0;
-                            for (int i = 0; i < n; i++) {
-                                if (word[i] != entry[i])
-                                    errors++;
-                            }
-                            if (errors == 0) {
-                                englishWords++;
-                            }
-                        }
-                    }
+                    englishWords += trial(word, n);
                 }
-                printf("%d %d\n", w, englishWords);
+                englishness = (float)englishWords / (float)w;
+                if (englishness > highest) {
+                    B = mC[i];
+                    highest = englishness;
+                }
+                printf("%c %d %d %f %f %c\n", mC[i], w, englishWords, englishness, highest, B);
+                r = (int)(M - B);
             }
+            fseek(input, 1, SEEK_SET); //beginning the cursor
+            goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
             break;
         case 3: 
             fscanf(input, "%26s", sKey);
@@ -276,7 +266,32 @@ int omission(char *x, int n) {
     return f; //returns 1, if there was a non-Latin character at the end; returns 0 otherwise
 }
 
-
+int trial(char *x, int n) {
+    FILE *list;
+    list = fopen("list.txt", "r");
+    if (list == NULL) { //this ends the program, if there is nothing in the file
+        perror("fopen()");
+        return 0;
+    }
+    
+    fseek(list, 0, SEEK_SET);
+    char entry[1000]; //an entry from the list
+    while (!feof(list)) {
+        fscanf(list, "%s", entry);
+        upperCase(entry, length(entry));
+        if (!strcmp(x, entry)) {
+            int errors = 0; //the number of incorrect characters
+            for (int i = 0; i < n; i++) {
+                if (x[i] != entry[i])
+                    errors++;
+            }
+            if (errors == 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 
 
