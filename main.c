@@ -42,7 +42,7 @@ int main()
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26]; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
-    char mC[6] = "ZETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
+    char mC[6] = " ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
     int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
     int S; //the setting of the action
@@ -69,7 +69,7 @@ int main()
     //Finding the setting
     fscanf(input, "%1s", setting);
     S = atoi(setting);
-    printf("%d\n", S);
+    printf("Setting: %d i.e. ", S);
     
     //Action i.e. the principal part of the code
     switch(S) {
@@ -77,28 +77,35 @@ int main()
         case 0:
             fscanf(input, "%2s", rKey); //getting the key
             r = atoi(rKey); //casting the key to an integer value
-            printf("%d\n", r); //printing the key
+            int line;
+            printf("Rotational encrytion\n");
+            printf("Key: %s\n", rKey);
+            printf("Rotator: %d\n", r); //printing the key
+            printf("Encrypted text:\n");
+            iDoNotCareWhatTheySayAboutGOTO: //If thou dost not like GOTO, then avaunt thou!
+            line = 0;
             while (!feof(input)) {
                 fscanf(input, "%s", word); //getting the next word i.e. string until space
                 n = length(word);
                 upperCase(word, n);
                 rotation(word, r, n);
                 printf("%s ", word); //printing the word followed by a space
+                line += n;
+                if (line >= 100) {
+                    printf("\n");
+                    line = 0;
+                }
             }
             break;
         //Rotational decryption with key
         case 1:
             fscanf(input, "%2s", rKey);
-            r = atoi(rKey);
-            printf("%d\n", r);
-            iDoNotCareWhatTheySayAboutGOTO: //If thou dost not like GOTO, then avaunt thou!
-            while (!feof(input)) {
-                fscanf(input, "%s", word);
-                n = length(word);
-                upperCase(word, n);
-                rotation(word, 26 - r, n); //rotating like case 0, but the rotator is the 26-r
-                printf("%s ", word);   
-            }
+            r = 26 - atoi(rKey);
+            printf("Rotational decrytion with key\n");
+            printf("Key: %s\n", rKey);
+            printf("Rotator: %d\n", r);
+            printf("Decrypted text:\n");
+            goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
             break;
         //Rotational decryption without key by frequency
         case 2:
@@ -126,7 +133,7 @@ int main()
                 while (!feof(input)) {
                     w++;
                     //Decryption by r
-                    fscanf(input, "%s", word);
+                    fscanf(input, "%s", word); //getting the next word
                     n = length(word);
                     upperCase(word, n);
                     rotation(word, 26 - r, n);  
@@ -141,7 +148,7 @@ int main()
                     highest = englishness;
                 }
                 printf("%c %d %d %f %f %c\n", mC[i], w, englishWords, englishness, highest, B); //printing some statistics
-                r = (int)(M - B);
+                r = 26 - (int)(M - B);
             }
             fseek(input, 1, SEEK_SET); //beginning the cursor
             goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
@@ -175,6 +182,8 @@ int main()
                 printf("%s ", text);  
             }
             break;
+        case 7:
+            printf("All work and no spaghetti code makes Jack a dull boy\n"); //EASTER EGG
         default:
             printf("Invalid S");
     }   
@@ -322,51 +331,51 @@ int trial(char *x, int n) {
 
 
 
-/*
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * Verification of uniqueness
- *      ________
- *     /  ____  \
- *    / /      \ \                         =========
- *   | |        | |=======================|  _   _  |}
- *   | |        | |=======================| |_| |_| |}
- *    \ \ ____ / /                        |+ _ + _ +|
- *     \________/                         | | | | | |
- *                                        |_| |_| |_| 
- * 
- * - Clayton John Carlon 2019
- * 
- *  
- */
+                                                                                                                                                                /*
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * Verification of uniqueness
+                                                                                                                                                                 *      ________
+                                                                                                                                                                 *     /  ____  \
+                                                                                                                                                                 *    / /      \ \                         =========
+                                                                                                                                                                 *   | |        | |=======================|  _   _  |}
+                                                                                                                                                                 *   | |        | |=======================| |_| |_| |}
+                                                                                                                                                                 *    \ \ ____ / /                        |+ _ + _ +|
+                                                                                                                                                                 *     \________/                         | | | | | |
+                                                                                                                                                                 *                                        |_| |_| |_| 
+                                                                                                                                                                 * 
+                                                                                                                                                                 * - Clayton John Carlon 2019
+                                                                                                                                                                 * 
+                                                                                                                                                                 *  
+                                                                                                                                                                 */
