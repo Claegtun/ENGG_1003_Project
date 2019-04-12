@@ -7,15 +7,28 @@
 
 //>>>---------> >>>---------> Functions' prototypes
 
-//One should see definitions for returning flags
-int length(char *x); //returns the length of string 'x'
-int upperCase(char *x, int n); //modifies the lower case char. of string 'x' to upper case and requires length 'n'
-int rotation(char *x, int r, int n); //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
-int substitution(char *x, char *y, int n); //substitutes an element of string 'x' with the corresponding element of string 'y' and requires length 'n'
-char mostCommon(char *x, int n);
-int decryptingAB(char *x, char *y); //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
-int omission(char *x, int n); //omits any punctuation or non-Latin character at the end of a string 'x'
-int trial(char *x, int n); //returns 1, if the string 'x' is contain in the list of common English words; returns 0 otherwise; requries length 'n'
+int length(char *x); 
+    //returns the length of string 'x'
+int upperCase(char *x, int n); 
+    //modifies the lower case char. of string 'x' to upper case and requires length 'n'
+    //returns 1, if any modification occured at all; returns 0 otherwise
+int rotation(char *x, int r, int n); 
+    //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
+    //returns 1, if any rotation occured at all; returns 0 otherwise
+int substitution(char *x, char *y, int n); 
+    //substitutes an element of string 'x' with the corresponding element of string 'y' and requires length 'n'
+    //returns 1, if substitution occured at all; returns 0 otherwise
+int decryptingAB(char *x, char *y); 
+    //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
+    //returns 1, if any conversion occured at all; returns 0 otherwise
+char mostCommon(char *x, int n); 
+    //returns the most common upper-case Latin character
+int omission(char *x, int n); 
+    //omits any punctuation or non-Latin (nor upper-case) character at the end of a string 'x'
+    //returns 1, if there was a non-Latin (nor upper-case) character at the end; returns 0 otherwise
+int trial(char *x, int n); 
+    //returns 1, if the string 'x' is contain in the list of common English words; 
+    //returns 0 otherwise or if the file list.txt is empty; requries length 'n'
 
 //>>>---------> >>>---------> Main
 
@@ -35,12 +48,14 @@ int main()
     int S; //the setting of the action
     char M; //the most common letter
     char B = ' '; //the best letter
-    /*S: Action:
+    
+    /* >>>--------->
+      S: Action:
       0  rotational encryption
       1  rotational decryption with key 
       2  rotational decryption without key by frequency
-      3  substitutional encryption with known key
-      4  substitutional decryption with known key
+      3  substitutional encryption with key
+      4  substitutional decryption with key
     */
    
     //Beginning of files
@@ -56,19 +71,19 @@ int main()
     S = atoi(setting);
     printf("%d\n", S);
     
-    //Encrpytion
+    //Action i.e. the principal part of the code
     switch(S) {
         //Rotational encryption
         case 0:
-            fscanf(input, "%2s", rKey);
-            r = atoi(rKey);
-            printf("%d\n", r);
+            fscanf(input, "%2s", rKey); //getting the key
+            r = atoi(rKey); //casting the key to an integer value
+            printf("%d\n", r); //printing the key
             while (!feof(input)) {
-                fscanf(input, "%s", word);
+                fscanf(input, "%s", word); //getting the next word i.e. string until space
                 n = length(word);
                 upperCase(word, n);
                 rotation(word, r, n);
-                printf("%s ", word);   
+                printf("%s ", word); //printing the word followed by a space
             }
             break;
         //Rotational decryption with key
@@ -81,7 +96,7 @@ int main()
                 fscanf(input, "%s", word);
                 n = length(word);
                 upperCase(word, n);
-                rotation(word, 26 - r, n);
+                rotation(word, 26 - r, n); //rotating like case 0, but the rotator is the 26-r
                 printf("%s ", word);   
             }
             break;
@@ -125,12 +140,13 @@ int main()
                     B = mC[i];
                     highest = englishness;
                 }
-                printf("%c %d %d %f %f %c\n", mC[i], w, englishWords, englishness, highest, B);
+                printf("%c %d %d %f %f %c\n", mC[i], w, englishWords, englishness, highest, B); //printing some statistics
                 r = (int)(M - B);
             }
             fseek(input, 1, SEEK_SET); //beginning the cursor
             goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
             break;
+        //Substitutional encryption
         case 3: 
             fscanf(input, "%26s", sKey);
             printf("%s\n", sKey);
@@ -144,6 +160,7 @@ int main()
                 printf("%s ", text);  
             }
             break;
+        //Substitutional decryption with key
         case 4:
             fscanf(input, "%26s", sKey);
             printf("%s\n", sKey);
@@ -184,7 +201,7 @@ int upperCase(char *x, int n) {
         }  
         x[i] = l;
     }  
-    return f; //returns 1, if any modification occured at all; returns 0 otherwise
+    return f; 
 }
 
 int rotation(char *x, int r, int n) {
@@ -201,7 +218,7 @@ int rotation(char *x, int r, int n) {
         }  
         x[i] = l;
     }    
-    return f; //returns 1, if any rotation occured at all; returns 0 otherwise
+    return f; 
 }
 
 int substitution(char *x, char *y, int n) {
@@ -217,7 +234,7 @@ int substitution(char *x, char *y, int n) {
         }  
         x[i] = l;
     } 
-    return f; //returns 1, if substitution occured at all; returns 0 otherwise
+    return f; 
 }
 
 int decryptingAB(char *x, char *y) {
@@ -232,7 +249,7 @@ int decryptingAB(char *x, char *y) {
             f = 1;
         }
     }
-    return f; //returns 1, if any conversion occured at all; returns 0 otherwise
+    return f; 
 }
 
 char mostCommon(char *x, int n) {
@@ -263,7 +280,7 @@ int omission(char *x, int n) {
         strcpy(x, y);
         f = 1;
     }
-    return f; //returns 1, if there was a non-Latin character at the end; returns 0 otherwise
+    return f; 
 }
 
 int trial(char *x, int n) {
