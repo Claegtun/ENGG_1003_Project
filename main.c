@@ -105,11 +105,14 @@ int main()
             printf("%c\n", M);
             
             //Trial for each common letter
-            for (int i = 0; i < 5; i++) {
+            int w; //'w' for the number of words
+            int englishWords = 0; //the number of English words
+            for (int i = 0; i < 1; i++) {
                 fseek(input, 27, SEEK_SET); //beginning the cursor
                 r = 0;//(int)(M - mC[i]); //the new rotator
-                //
+                w = 0;
                 while (!feof(input)) {
+                    w++;
                     //Decryption by r
                     fscanf(input, "%s", word);
                     n = length(word);
@@ -118,18 +121,24 @@ int main()
                     //Omission of punctuation at the end
                     omission(word, n);
                     //Trial by spelling
-                    printf("%s\n", word);
                     while (!feof(list)) {
                         fseek(input, 0, SEEK_SET);
                         fscanf(list, "%s", entry);
+                        upperCase(entry, length(entry));
                         if (!strcmp(word, entry)) {
                             int errors = 0;
                             for (int i = 0; i < n; i++) {
-                                error =    
+                                if (word[i] != entry[i])
+                                    errors++;
+                            }
+                            if (errors == 0) {
+                                englishWords++;
+                                printf("%s %s\n", word, entry);
                             }
                         }
                     }
                 }
+                printf("%d %d\n", w, englishWords);
             }
             break;
         case 3: 
