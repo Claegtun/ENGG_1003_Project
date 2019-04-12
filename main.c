@@ -53,7 +53,7 @@ int main()
       S: Action:
       0  rotational encryption
       1  rotational decryption with key 
-      2  rotational decryption without key by frequency
+      2  rotational decryption without key
       3  substitutional encryption with key
       4  substitutional decryption with key
     */
@@ -78,9 +78,10 @@ int main()
             fscanf(input, "%2s", rKey); //getting the key
             r = atoi(rKey); //casting the key to an integer value
             int line;
+            //Printing relevant data
             printf("Rotational encrytion\n");
             printf("Key: %s\n", rKey);
-            printf("Rotator: %d\n", r); //printing the key
+            printf("Rotator: %d\n", r);
             printf("Encrypted text:\n");
             iDoNotCareWhatTheySayAboutGOTO: //If thou dost not like GOTO, then avaunt thou!
             line = 0;
@@ -90,6 +91,7 @@ int main()
                 upperCase(word, n);
                 rotation(word, r, n);
                 printf("%s ", word); //printing the word followed by a space
+                //Ending the line by at most 100 characters
                 line += n;
                 if (line >= 100) {
                     printf("\n");
@@ -101,6 +103,7 @@ int main()
         case 1:
             fscanf(input, "%2s", rKey);
             r = 26 - atoi(rKey);
+            //Printing relevant data
             printf("Rotational decrytion with key\n");
             printf("Key: %s\n", rKey);
             printf("Rotator: %d\n", r);
@@ -116,12 +119,13 @@ int main()
                 upperCase(word, n);
                 strcat(text, word);
             }
-            
             //Getting the most common letter from which
             n = length(text);
             M = mostCommon(text, n);
-            printf("%c\n", M);
-            
+            //Printing relevant data
+            printf("Rotational decrytion without key\n");
+            printf("Most common letter found: %c\n", M);
+            printf("Character tested:   Words:  English* words:  Englishness:\n");
             //Trial for each common letter
             for (int i = 1; i < 6; i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor
@@ -147,11 +151,14 @@ int main()
                     B = mC[i];
                     highest = englishness;
                 }
-                printf("%c %d %d %f %f %c\n", mC[i], w, englishWords, englishness, highest, B); //printing some statistics
-                r = 26 - (int)(M - B);
+                printf("%c\t\t    %d\t    %d\t\t     %f\n", mC[i], w, englishWords, englishness); //printing some statistics
             }
             fseek(input, 1, SEEK_SET); //beginning the cursor
-            goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
+            r = 26 - (int)(M - B);
+            printf("*detected by list.txt\n");
+            printf("Chosen letter and rotator by freuqency: %c %d\n", B, r);
+            printf("Decrypted text:\n");
+            goto iDoNotCareWhatTheySayAboutGOTO; //I still do not care
             break;
         //Substitutional encryption
         case 3: 
@@ -183,7 +190,14 @@ int main()
             }
             break;
         case 7:
+            printf("EASTER EGG\n");
+            int ploughman = 0;
+            arrow:
             printf("All work and no spaghetti code makes Jack a dull boy\n"); //EASTER EGG
+            ploughman++;
+            if (ploughman != 9) 
+                goto arrow; //who says, that one can not make a while loop using GOTO?
+            break;
         default:
             printf("Invalid S");
     }   
@@ -331,51 +345,6 @@ int trial(char *x, int n) {
 
 
 
-                                                                                                                                                                /*
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * Verification of uniqueness
-                                                                                                                                                                 *      ________
-                                                                                                                                                                 *     /  ____  \
-                                                                                                                                                                 *    / /      \ \                         =========
-                                                                                                                                                                 *   | |        | |=======================|  _   _  |}
-                                                                                                                                                                 *   | |        | |=======================| |_| |_| |}
-                                                                                                                                                                 *    \ \ ____ / /                        |+ _ + _ +|
-                                                                                                                                                                 *     \________/                         | | | | | |
-                                                                                                                                                                 *                                        |_| |_| |_| 
-                                                                                                                                                                 * 
-                                                                                                                                                                 * - Clayton John Carlon 2019
-                                                                                                                                                                 * 
-                                                                                                                                                                 *  
-                                                                                                                                                                 */
+                                                                                                             
+                                    
+                                                                                                                                                    
