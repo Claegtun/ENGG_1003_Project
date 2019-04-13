@@ -1,11 +1,11 @@
-//>>>---------> >>>---------> Libraries
+//>>>---------> >>>---------> Libraries <---------<<< <---------<<<
 
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 
 
-//>>>---------> >>>---------> Functions' prototypes
+//>>>---------> >>>---------> Functions' prototypes <---------<<< <---------<<<
 
 int length(char *x); 
     //returns the length of string 'x'
@@ -30,7 +30,7 @@ int trial(char *x, int n);
     //returns 1, if the string 'x' is contain in the list of common English words; 
     //returns 0 otherwise or if the file list.txt is empty; requries length 'n'
 
-//>>>---------> >>>---------> Main
+//>>>---------> >>>---------> Main <---------<<< <---------<<<
 
 int main()
 {
@@ -48,6 +48,7 @@ int main()
     int S; //the setting of the action
     char M; //the most common letter
     char B = ' '; //the best letter
+    int line; //the number of characters in a line
     
     /* >>>--------->
       S: Action:
@@ -77,11 +78,10 @@ int main()
     printf("Setting: %d i.e. ", S); fprintf(output, "Setting: %d i.e. ", S);
     //Action i.e. the principal part of the code
     switch(S) {
-        //Rotational encryption
+        //Rotational encryption <---------<<< <---------<<<
         case 0:
             fscanf(input, "%2s", rKey); //getting the key
             r = atoi(rKey); //casting the key to an integer value
-            int line;
             //Printing relevant data
             printf("Rotational encrytion\n"); fprintf(output, "Rotational encrytion\n");
             printf("Key: %s\n", rKey); fprintf(output, "Key: %s\n", rKey);
@@ -91,6 +91,8 @@ int main()
             line = 0;
             while (!feof(input)) {
                 fscanf(input, "%s", word); //getting the next word i.e. string until space
+                if (feof(input))
+                    break; //This condition break was added, for that the last word kept being repeated; this be a temporary solution
                 n = length(word);
                 upperCase(word, n);
                 rotation(word, r, n);
@@ -103,7 +105,7 @@ int main()
                 }
             }
             break;
-        //Rotational decryption with key
+        //Rotational decryption with key <---------<<< <---------<<<
         case 1:
             fscanf(input, "%2s", rKey);
             r = 26 - atoi(rKey);
@@ -114,7 +116,7 @@ int main()
             printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
             break;
-        //Rotational decryption without key by frequency
+        //Rotational decryption without key by frequency <---------<<< <---------<<<
         case 2:
             //Flattening the text into one string
             while (!feof(input)) {
@@ -165,33 +167,49 @@ int main()
             printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             goto iDoNotCareWhatTheySayAboutGOTO; //I still do not care
             break;
-        //Substitutional encryption
+        //Substitutional encryption <---------<<< <---------<<<
         case 3: 
             fscanf(input, "%26s", sKey);
-            printf("%s\n", sKey);
             strcpy(AB, sKey);
+            //Printing relevant data
+            printf("Substitutional encrytion\n"); fprintf(output, "Substitutional encrytion\n");
+            printf("Key: %s\n", sKey); fprintf(output, "Key: %s\n", sKey);
+            printf("Encrypted text:\n"); fprintf(output, "Encrypted text:\n");
             while (!feof(input)) {
                 fscanf(input, "%s", word);
-                strcpy(text, word);
-                n = length(text);
-                upperCase(text, n);
-                substitution(text, AB, n);    
-                printf("%s ", text);  
+                n = length(word);
+                upperCase(word, n);
+                substitution(word, AB, n);    
+                printf("%s ", word); fprintf(output, "%s ", word);
+                //Ending the line by at most 100 characters
+                line += n;
+                if (line >= 100) {
+                    printf("\n"); fprintf(output, "\n");
+                    line = 0;
+                }
             }
             break;
-        //Substitutional decryption with key
+        //Substitutional decryption with key <---------<<< <---------<<<
         case 4:
             fscanf(input, "%26s", sKey);
-            printf("%s\n", sKey);
             strcpy(AB, sKey);
+            //Printing relevant data
+            printf("Substitutional decrytion\n"); fprintf(output, "Substitutional decrytion\n");
+            printf("Key: %s\n", sKey); fprintf(output, "Key: %s\n", sKey);
+            printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             while (!feof(input)) {
                 fscanf(input, "%s", word);
-                strcpy(text, word);
-                n = length(text);
-                upperCase(text, n);
+                n = length(word);
+                upperCase(word, n);
                 decryptingAB(AB, dAB);
-                substitution(text, dAB, n);    
-                printf("%s ", text);  
+                substitution(word, dAB, n);    
+                printf("%s ", word); fprintf(output, "%s ", word);
+                //Ending the line by at most 100 characters
+                line += n;
+                if (line >= 100) {
+                    printf("\n"); fprintf(output, "\n");
+                    line = 0;
+                }
             }
             break;
         case 7:
