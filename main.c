@@ -65,12 +65,16 @@ int main()
         perror("fopen()");
         return 0;
     }
-    
+    FILE *output;
+    output = fopen("output.txt", "w");
+    if (output == NULL) {
+        perror("fopen()");
+        return 0;
+    }
     //Finding the setting
     fscanf(input, "%1s", setting);
     S = atoi(setting);
-    printf("Setting: %d i.e. ", S);
-    
+    printf("Setting: %d i.e. ", S); fprintf(output, "Setting: %d i.e. ", S);
     //Action i.e. the principal part of the code
     switch(S) {
         //Rotational encryption
@@ -79,10 +83,10 @@ int main()
             r = atoi(rKey); //casting the key to an integer value
             int line;
             //Printing relevant data
-            printf("Rotational encrytion\n");
-            printf("Key: %s\n", rKey);
-            printf("Rotator: %d\n", r);
-            printf("Encrypted text:\n");
+            printf("Rotational encrytion\n"); fprintf(output, "Rotational encrytion\n");
+            printf("Key: %s\n", rKey); fprintf(output, "Key: %s\n", rKey);
+            printf("Rotator: %d\n", r); fprintf(output, "Rotator: %d\n", r);
+            printf("Encrypted text:\n"); fprintf(output, "Encrypted text:\n");
             iDoNotCareWhatTheySayAboutGOTO: //If thou dost not like GOTO, then avaunt thou!
             line = 0;
             while (!feof(input)) {
@@ -90,11 +94,11 @@ int main()
                 n = length(word);
                 upperCase(word, n);
                 rotation(word, r, n);
-                printf("%s ", word); //printing the word followed by a space
+                printf("%s ", word); fprintf(output, "%s ", word); //printing the word followed by a space
                 //Ending the line by at most 100 characters
                 line += n;
                 if (line >= 100) {
-                    printf("\n");
+                    printf("\n"); fprintf(output, "\n");
                     line = 0;
                 }
             }
@@ -104,10 +108,10 @@ int main()
             fscanf(input, "%2s", rKey);
             r = 26 - atoi(rKey);
             //Printing relevant data
-            printf("Rotational decrytion with key\n");
-            printf("Key: %s\n", rKey);
-            printf("Rotator: %d\n", r);
-            printf("Decrypted text:\n");
+            printf("Rotational decrytion with key\n"); fprintf(output, "Rotational decrytion with key\n");
+            printf("Key: %s\n", rKey); fprintf(output, "Key: %s\n", rKey);
+            printf("Rotator: %d\n", r); fprintf(output, "Rotator: %d\n", r);
+            printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             goto iDoNotCareWhatTheySayAboutGOTO; //All work and no spagetti code makes Jack a dull boy.
             break;
         //Rotational decryption without key by frequency
@@ -123,9 +127,9 @@ int main()
             n = length(text);
             M = mostCommon(text, n);
             //Printing relevant data
-            printf("Rotational decrytion without key\n");
-            printf("Most common letter found: %c\n", M);
-            printf("Character tested:   Words:  English* words:  Englishness:\n");
+            printf("Rotational decrytion without key\n"); fprintf(output, "Rotational decrytion without key\n");
+            printf("Most common letter found: %c\n", M); fprintf(output, "Most common letter found: %c\n", M);
+            printf("Character tested:   Words:  English* words:  Englishness:\n"); fprintf(output, "Character tested:   Words:  English* words:  Englishness:\n");
             //Trial for each common letter
             for (int i = 1; i < 6; i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor
@@ -151,13 +155,14 @@ int main()
                     B = mC[i];
                     highest = englishness;
                 }
-                printf("%c\t\t    %d\t    %d\t\t     %f\n", mC[i], w, englishWords, englishness); //printing some statistics
+                printf("%c\t\t    %d\t    %d\t\t     %f\n", mC[i], w, englishWords, englishness); 
+                fprintf(output, "%c\t\t\t\t    %d\t    %d\t\t\t     %f\n", mC[i], w, englishWords, englishness); //printing some statistics
             }
             fseek(input, 1, SEEK_SET); //beginning the cursor
             r = 26 - (int)(M - B);
-            printf("*detected by list.txt\n");
-            printf("Chosen letter and rotator by freuqency: %c %d\n", B, r);
-            printf("Decrypted text:\n");
+            printf("*detected by list.txt\n"); fprintf(output, "*detected by list.txt\n");
+            printf("Chosen letter and rotator by freuqency: %c %d\n", B, r); fprintf(output, "Chosen letter and rotator by freuqency: %c %d\n", B, r);
+            printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             goto iDoNotCareWhatTheySayAboutGOTO; //I still do not care
             break;
         //Substitutional encryption
