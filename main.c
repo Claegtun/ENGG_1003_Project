@@ -21,7 +21,7 @@ int substitution(char *x, char *y, int n);
 int decryptingAB(char *x, char *y); 
     //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
     //returns 1, if any conversion occured at all; returns 0 otherwise
-char mostCommon(char *x, int n); 
+char letter(char *x, int n); 
     //returns the most common upper-case Latin character
 int omission(char *x, int n); 
     //omits any punctuation or non-Latin (nor upper-case) character at the end of a string 'x'
@@ -29,6 +29,12 @@ int omission(char *x, int n);
 int trial(char *x, int n); 
     //returns 1, if the string 'x' is contain in the list of common English words; 
     //returns 0 otherwise or if the file list.txt is empty; requries length 'n'
+int bigram(char *x, char *y, int n);
+    //modifies the 'y' string to contain the most common bigram (i.e. pair of letters) from the 'x'
+    //returns the number of bigrams, that were considered
+int trigram(char *x, char *y, int n);
+    //modifies the 'y' string to contain the most common trigram (i.e. pair of letters) from the 'x'
+    //returns the number of trigrams, that were considered
 
 //>>>---------> >>>---------> Main <---------<<< <---------<<<
 
@@ -43,12 +49,16 @@ int main()
     char AB[26]; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
     char mC[6] = " ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
+    char mB[9] = " THERON"; //the first four most common bigrams in the Modern English language from https://en.wikipedia.org/wiki/Frequency_analysis
+    char mR[5] = " SETF"; //the first four most common repeated letters in the Modern English language from https://en.wikipedia.org/wiki/Frequency_analysis
     int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
     int S; //the setting of the action
-    char M; //the most common letter
+    char cL; //the most common letter
     char B = ' '; //the best letter
     int line; //the number of characters in a line
+    char cBg[2]; //the most common bigram
+    char cTg[3]; //the most common trigram
     
     /* >>>--------->
       S: Action:
@@ -127,15 +137,15 @@ int main()
             }
             //Getting the most common letter from which
             n = length(text);
-            M = mostCommon(text, n);
+            cL = letter(text, n);
             //Printing relevant data
             printf("Rotational decrytion without key\n"); fprintf(output, "Rotational decrytion without key\n");
-            printf("Most common letter found: %c\n", M); fprintf(output, "Most common letter found: %c\n", M);
+            printf("Most common letter found: %c\n", cL); fprintf(output, "Most common letter found: %c\n", cL);
             printf("Character tested:   Words:  English* words:  Englishness:\n"); fprintf(output, "Character tested:   Words:  English* words:  Englishness:\n");
             //Trial for each common letter
             for (int i = 1; i < 6; i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor
-                r = (int)(M - mC[i]); //the new rotator
+                r = (int)(cL - mC[i]); //the new rotator
                 int w = 0; //'w' for the number of words
                 int englishWords = 0; //the number of English words
                 float englishness; //the percentage of English words in the text
@@ -161,7 +171,7 @@ int main()
                 fprintf(output, "%c\t\t\t\t    %d\t    %d\t\t\t     %f\n", mC[i], w, englishWords, englishness); //printing some statistics
             }
             fseek(input, 1, SEEK_SET); //beginning the cursor
-            r = 26 - (int)(M - B);
+            r = 26 - (int)(cL - B);
             printf("*detected by list.txt\n"); fprintf(output, "*detected by list.txt\n");
             printf("Chosen letter and rotator by freuqency: %c %d\n", B, r); fprintf(output, "Chosen letter and rotator by freuqency: %c %d\n", B, r);
             printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
@@ -194,7 +204,7 @@ int main()
             fscanf(input, "%26s", sKey);
             strcpy(AB, sKey);
             //Printing relevant data
-            printf("Substitutional decrytion\n"); fprintf(output, "Substitutional decrytion\n");
+            printf("Substitutional decrytion with key\n"); fprintf(output, "Substitutional decrytion with key\n");
             printf("Key: %s\n", sKey); fprintf(output, "Key: %s\n", sKey);
             printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             while (!feof(input)) {
@@ -211,6 +221,37 @@ int main()
                     line = 0;
                 }
             }
+            break;
+        case 5:
+            //Printing relevant data
+            printf("Substitutional decrytion without key\n");
+            //Flattening the text into one string
+            while (!feof(input)) {
+                fscanf(input, "%s", word);
+                n = length(word);
+                upperCase(word, n);
+                strcat(text, word);
+            }
+            //Getting the most common letter from which
+            n = length(text);
+            cL = letter(text, n);
+            //Getting the most common bigram from which
+            line = bigram(text, cBg, n);
+            //Getting the most common trigram from which
+            trigram(text, cTg, n);
+            printf("%c %s %s\n", cL, cBg, cTg);
+            if (!strncmp(cTg, cBg, 2)) {
+                AB[(int)'T'-65] = cTg[0];
+                AB[(int)'H'-65] = cTg[1];
+                AB[(int)'E'-65] = cTg[2];
+            } 
+            if (cBg[2] == cL) {
+                AB[(int)'E'-65] = cL;    
+            } 
+            if (cBg[0] == cL) {
+                AB[(int)'T'-65] = cL;    
+            } 
+            
             break;
         case 7:
             printf("EASTER EGG\n");
@@ -298,11 +339,11 @@ int decryptingAB(char *x, char *y) {
     return f; 
 }
 
-char mostCommon(char *x, int n) {
+char letter(char *x, int n) {
     char l; //'l' for letter to be tested
     int f; //'f' for frequency of the letter
     int m = 0; //'m' for maximum frequency of a letter
-    char M = 'A'; //letter, that has the maxmimum frequency 
+    char cL = 'A'; //the letter, that has the maxmimum frequency 
     for (l = 'A'; l <= 'Z'; l++) {
         f = 0;
         for (int i = 0; i < n; i++) {
@@ -312,10 +353,10 @@ char mostCommon(char *x, int n) {
         }
         if (f >= m) {
             m = f;
-            M = l;
+            cL = l;
         }
     }
-    return M;
+    return cL;
 }
 
 int omission(char *x, int n) {
@@ -356,7 +397,53 @@ int trial(char *x, int n) {
     return 0;
 }
 
+int bigram(char *x, char *y, int n) {
+    char l0, l1; //'l' for letter to be tested
+    int f; //'f' for frequency of the letter
+    int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
+    int m = 0; //'m' for maximum frequency of a letter
+    for (l0 = 'A'; l0 <= 'Z'; l0++) {
+        for (l1 = 'A'; l1 <= 'Z'; l1++) {
+            f = 0;
+            for (int i = 0; i < n-1; i++) {
+                if ((x[i] == l0) && (x[i+1] == l1)) {
+                    f++;
+                }        
+            }
+            if (f > m) {
+                m = f;
+                y[0] = l0; y[1] = l1;
+                i++;
+            }    
+        }
+    }
+    return i;
+}
 
+int trigram(char *x, char *y, int n) {
+    char l0, l1, l2; //'l' for letter to be tested
+    int f; //'f' for frequency of the letter
+    int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
+    int m = 0; //'m' for maximum frequency of a letter
+    for (l0 = 'A'; l0 <= 'Z'; l0++) {
+        for (l1 = 'A'; l1 <= 'Z'; l1++) {
+            for (l2 = 'A'; l2 <= 'Z'; l2++) {
+                f = 0;
+                for (int i = 0; i < n-2; i++) {
+                    if ((x[i] == l0) && (x[i+1] == l1) && (x[i+2] == l2)) {
+                        f++;
+                    }        
+                }
+                if (f > m) {
+                    m = f;
+                    y[0] = l0; y[1] = l1; y[2] = l2;
+                    i++;
+                }   
+            }     
+        }
+    }
+    return i;
+}
 
 
 
