@@ -284,7 +284,13 @@ int main()
                     fscanf(list, "%s", entry);
                     upperCase(entry);
                     if (length(word) == length(entry)) {
-                        
+                        if (frequency(word, '_') == 1) {
+                            n = strcspn(word, "_");
+                            for (char c = 'A'; c <= 'Z'; c++) {
+                                word[n] = c;
+                            }
+                            printf("%s ", word);
+                        }    
                     } 
                 }
             }
@@ -432,7 +438,7 @@ int bigram(char *x, char *y) {
     int f; //'f' for frequency of the letter
     int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
     int m = 0; //'m' for maximum frequency of a letter
-    int n = length(x);
+    int n; n = length(x);
     for (l0 = 'A'; l0 <= 'Z'; l0++) {
         for (l1 = 'A'; l1 <= 'Z'; l1++) {
             f = 0;
@@ -478,7 +484,6 @@ int trigram(char *x, char *y) {
 }
 
 int frequency(char *x, char y) {
-    char l; //'l' for letter
     int f = 0; //'f' for frequency
     int n = length(x);
     for (int i = 0; i < n; i++) {
