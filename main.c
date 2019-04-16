@@ -46,7 +46,7 @@ int main()
     char text[10000] = ""; //the text
     char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
-    char AB[26]; //the encrytping alphabet
+    char AB[26] = "__________________________"; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
     char mC[6] = " ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
     char mB[9] = " THERON"; //the first four most common bigrams in the Modern English language from https://en.wikipedia.org/wiki/Frequency_analysis
@@ -241,16 +241,31 @@ int main()
             trigram(text, cTg, n);
             printf("%c %s %s\n", cL, cBg, cTg);
             if (!strncmp(cTg, cBg, 2)) {
-                AB[(int)'T'-65] = cTg[0];
-                AB[(int)'H'-65] = cTg[1];
-                AB[(int)'E'-65] = cTg[2];
+                AB[(int)cTg[0]-65] = 'T';
+                AB[(int)cTg[1]-65] = 'H';
+                AB[(int)cTg[2]-65] = 'E';
             } 
             if (cBg[2] == cL) {
-                AB[(int)'E'-65] = cL;    
+                AB[(int)cL-65] = 'E';    
             } 
             if (cBg[0] == cL) {
-                AB[(int)'T'-65] = cL;    
+                AB[(int)cL-65] = 'T';    
             } 
+            fseek(input, 1, SEEK_SET);
+            while (!feof(input)) {
+                fscanf(input, "%s", word);
+                n = length(word);
+                upperCase(word, n);
+                decryptingAB(AB, dAB);
+                substitution(word, AB, n);   
+                printf("%s ", word);
+                //Ending the line by at most 100 characters
+                line += n;
+                if (line >= 100) {
+                    printf("\n");
+                    line = 0;
+                }
+            }
             
             break;
         case 7:
