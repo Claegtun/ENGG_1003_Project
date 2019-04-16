@@ -9,32 +9,34 @@
 
 int length(char *x); 
     //returns the length of string 'x'
-int upperCase(char *x, int n); 
-    //modifies the lower case char. of string 'x' to upper case and requires length 'n'
+int upperCase(char *x); 
+    //modifies the lower case char. of string 'x' to upper case
     //returns 1, if any modification occured at all; returns 0 otherwise
-int rotation(char *x, int r, int n); 
-    //rotates each alphabetical char. of string 'x' by 'r' and requires length 'n'
+int rotation(char *x, int r); 
+    //rotates each alphabetical char. of string 'x' by 'r'
     //returns 1, if any rotation occured at all; returns 0 otherwise
-int substitution(char *x, char *y, int n); 
-    //substitutes an element of string 'x' with the corresponding element of string 'y' and requires length 'n'
+int substitution(char *x, char *y); 
+    //substitutes an element of string 'x' with the corresponding element of string 'y'
     //returns 1, if substitution occured at all; returns 0 otherwise
 int decryptingAB(char *x, char *y); 
-    //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x' and requires length 'n'
+    //makes an alphabet 'y', for decrypting from the encrypting alphabet 'x'
     //returns 1, if any conversion occured at all; returns 0 otherwise
-char letter(char *x, int n); 
+char letter(char *x); 
     //returns the most common upper-case Latin character
-int omission(char *x, int n); 
-    //omits any punctuation or non-Latin (nor upper-case) character at the end of a string 'x'
+int omission(char *x); 
+    //omits any punctuation (except '_') or non-Latin (nor upper-case) character at the end of a string 'x'
     //returns 1, if there was a non-Latin (nor upper-case) character at the end; returns 0 otherwise
-int trial(char *x, int n); 
+int trial(char *x, FILE *f); 
     //returns 1, if the string 'x' is contain in the list of common English words; 
-    //returns 0 otherwise or if the file list.txt is empty; requries length 'n'
-int bigram(char *x, char *y, int n);
+    //returns 0 otherwise or if the file list.txt is empty
+int bigram(char *x, char *y);
     //modifies the 'y' string to contain the most common bigram (i.e. pair of letters) from the 'x'
     //returns the number of bigrams, that were considered
-int trigram(char *x, char *y, int n);
+int trigram(char *x, char *y);
     //modifies the 'y' string to contain the most common trigram (i.e. pair of letters) from the 'x'
     //returns the number of trigrams, that were considered
+int frequency(char *x, char y);
+    //returns the frequency of the character 'y' in the string 'x'
 
 //>>>---------> >>>---------> Main <---------<<< <---------<<<
 
@@ -78,10 +80,18 @@ int main()
     }
     FILE *output;
     output = fopen("output.txt", "w");
-    if (output == NULL) {
+    
+    FILE *list;
+    list = fopen("list.txt", "r");
+    if (list == NULL) { //this ends the program, if there is nothing in the file
         perror("fopen()");
         return 0;
     }
+    
+ 
+    FILE *buffer;
+    buffer = fopen("buffer.txt", "w+");
+    
     //Finding the setting
     fscanf(input, "%1s", setting);
     S = atoi(setting);
@@ -104,8 +114,8 @@ int main()
                 if (feof(input))
                     break; //This condition break was added, for that the last word kept being repeated; this be a temporary solution
                 n = length(word);
-                upperCase(word, n);
-                rotation(word, r, n);
+                upperCase(word);
+                rotation(word, r);
                 printf("%s ", word); fprintf(output, "%s ", word); //printing the word followed by a space
                 //Ending the line by at most 100 characters
                 line += n;
@@ -132,12 +142,12 @@ int main()
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
-                upperCase(word, n);
+                upperCase(word);
                 strcat(text, word);
             }
             //Getting the most common letter from which
             n = length(text);
-            cL = letter(text, n);
+            cL = letter(text);
             //Printing relevant data
             printf("Rotational decrytion without key\n"); fprintf(output, "Rotational decrytion without key\n");
             printf("Most common letter found: %c\n", cL); fprintf(output, "Most common letter found: %c\n", cL);
@@ -155,12 +165,12 @@ int main()
                     //Decryption by r
                     fscanf(input, "%s", word); //getting the next word
                     n = length(word);
-                    upperCase(word, n);
-                    rotation(word, 26 - r, n);  
+                    upperCase(word);
+                    rotation(word, 26 - r);  
                     //Omission of punctuation at the end
-                    omission(word, n);
+                    omission(word);
                     //Trial by spelling
-                    englishWords += trial(word, n);
+                    englishWords += trial(word, list);
                 }
                 englishness = (float)englishWords / (float)w;
                 if (englishness > highest) {
@@ -188,8 +198,8 @@ int main()
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
-                upperCase(word, n);
-                substitution(word, AB, n);    
+                upperCase(word);
+                substitution(word, AB);    
                 printf("%s ", word); fprintf(output, "%s ", word);
                 //Ending the line by at most 100 characters
                 line += n;
@@ -210,9 +220,9 @@ int main()
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
-                upperCase(word, n);
+                upperCase(word);
                 decryptingAB(AB, dAB);
-                substitution(word, dAB, n);    
+                substitution(word, dAB);    
                 printf("%s ", word); fprintf(output, "%s ", word);
                 //Ending the line by at most 100 characters
                 line += n;
@@ -229,17 +239,18 @@ int main()
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
-                upperCase(word, n);
+                upperCase(word);
                 strcat(text, word);
             }
             //Getting the most common letter from which
             n = length(text);
-            cL = letter(text, n);
+            cL = letter(text);
             //Getting the most common bigram from which
-            line = bigram(text, cBg, n);
+            line = bigram(text, cBg);
             //Getting the most common trigram from which
-            trigram(text, cTg, n);
+            trigram(text, cTg);
             printf("%c %s %s\n", cL, cBg, cTg);
+            //Making an alphabet
             if (!strncmp(cTg, cBg, 2)) {
                 AB[(int)cTg[0]-65] = 'T';
                 AB[(int)cTg[1]-65] = 'H';
@@ -251,19 +262,30 @@ int main()
             if (cBg[0] == cL) {
                 AB[(int)cL-65] = 'T';    
             } 
+            //Filling in the text
             fseek(input, 1, SEEK_SET);
             while (!feof(input)) {
                 fscanf(input, "%s", word);
                 n = length(word);
-                upperCase(word, n);
+                upperCase(word);
                 decryptingAB(AB, dAB);
-                substitution(word, AB, n);   
+                substitution(word, AB);   
                 printf("%s ", word);
                 //Ending the line by at most 100 characters
                 line += n;
                 if (line >= 100) {
                     printf("\n");
                     line = 0;
+                }
+                omission(word);
+                fseek(list, 0, SEEK_SET);
+                char entry[1000]; //an entry from the list
+                while (!feof(list)) {
+                    fscanf(list, "%s", entry);
+                    upperCase(entry);
+                    if (length(word) == length(entry)) {
+                        
+                    } 
                 }
             }
             
@@ -276,6 +298,7 @@ int main()
             ploughman++;
             if (ploughman != 9) 
                 goto arrow; //who says, that one can not make a while loop using GOTO?
+            printf("%d", frequency("ggafg''./gg2gaf2 5ga236ygyg", 'g')); //testing frequency()
             break;
         default:
             printf("Invalid S");
@@ -293,9 +316,10 @@ int length(char *x) {
     return n; //returns the number of char.
 }
 
-int upperCase(char *x, int n) {
+int upperCase(char *x) {
     char l; //'l' for letter
     int f = 0; //'f' for flag
+    int n = length(x);
     for (int i = 0; i < n; i++) {
         l = x[i];
         if ((l >= 'a') && (l <= 'z')) {
@@ -306,10 +330,11 @@ int upperCase(char *x, int n) {
     return f; 
 }
 
-int rotation(char *x, int r, int n) {
+int rotation(char *x, int r) {
     char l; //'l' for letter
     int il; //integer of 'l'
     int f = 0; //'f' for flag
+    int n = length(x);
     for (int i = 0; i < n; i++) {
         l = x[i];
         if ((l >= 'A') && (l <= 'Z')) {
@@ -323,10 +348,11 @@ int rotation(char *x, int r, int n) {
     return f; 
 }
 
-int substitution(char *x, char *y, int n) {
+int substitution(char *x, char *y) {
     char l; //'l' for letter
     int il; //integer of 'l'
     int f = 0; //'f' for flag
+    int n = length(x);
     for (int i = 0; i < n; i++) {
         l = x[i];
         if ((l >= 'A') && (l <= 'Z')) {
@@ -354,11 +380,12 @@ int decryptingAB(char *x, char *y) {
     return f; 
 }
 
-char letter(char *x, int n) {
+char letter(char *x) {
     char l; //'l' for letter to be tested
     int f; //'f' for frequency of the letter
     int m = 0; //'m' for maximum frequency of a letter
     char cL = 'A'; //the letter, that has the maxmimum frequency 
+    int n = length(x);
     for (l = 'A'; l <= 'Z'; l++) {
         f = 0;
         for (int i = 0; i < n; i++) {
@@ -374,10 +401,12 @@ char letter(char *x, int n) {
     return cL;
 }
 
-int omission(char *x, int n) {
+int omission(char *x) {
     char y[1000] = ""; //temporary string
     int f = 0; //'f' for flag
-    if ((x[n-1] < 'A') || (x[n-1] > 'Z')) {
+    int n = length(x);
+    if (((x[n-1] < 'A') || (x[n-1] > 'Z')) && (x[n-1] != '_')) {
+        //'_' is not included, so that it can be utilised for the substitutional decryption withou key
         strxfrm(y, x, n-1);
         strcpy(x, y);
         f = 1;
@@ -385,38 +414,25 @@ int omission(char *x, int n) {
     return f; 
 }
 
-int trial(char *x, int n) {
-    FILE *list;
-    list = fopen("list.txt", "r");
-    if (list == NULL) { //this ends the program, if there is nothing in the file
-        perror("fopen()");
-        return 0;
-    }
-    
-    fseek(list, 0, SEEK_SET);
+int trial(char *x, FILE *f) {
+    fseek(f, 0, SEEK_SET);
     char entry[1000]; //an entry from the list
-    while (!feof(list)) {
-        fscanf(list, "%s", entry);
-        upperCase(entry, length(entry));
+    while (!feof(f)) {
+        fscanf(f, "%s", entry);
+        upperCase(entry);
         if (!strcmp(x, entry)) {
-            int errors = 0; //the number of incorrect characters
-            for (int i = 0; i < n; i++) {
-                if (x[i] != entry[i])
-                    errors++;
-            }
-            if (errors == 0) {
-                return 1;
-            }
+           return 1;
         }
     }
     return 0;
 }
 
-int bigram(char *x, char *y, int n) {
+int bigram(char *x, char *y) {
     char l0, l1; //'l' for letter to be tested
     int f; //'f' for frequency of the letter
     int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
     int m = 0; //'m' for maximum frequency of a letter
+    int n = length(x);
     for (l0 = 'A'; l0 <= 'Z'; l0++) {
         for (l1 = 'A'; l1 <= 'Z'; l1++) {
             f = 0;
@@ -435,11 +451,12 @@ int bigram(char *x, char *y, int n) {
     return i;
 }
 
-int trigram(char *x, char *y, int n) {
+int trigram(char *x, char *y) {
     char l0, l1, l2; //'l' for letter to be tested
     int f; //'f' for frequency of the letter
     int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
     int m = 0; //'m' for maximum frequency of a letter
+    int n = length(x);
     for (l0 = 'A'; l0 <= 'Z'; l0++) {
         for (l1 = 'A'; l1 <= 'Z'; l1++) {
             for (l2 = 'A'; l2 <= 'Z'; l2++) {
@@ -458,6 +475,17 @@ int trigram(char *x, char *y, int n) {
         }
     }
     return i;
+}
+
+int frequency(char *x, char y) {
+    char l; //'l' for letter
+    int f = 0; //'f' for frequency
+    int n = length(x);
+    for (int i = 0; i < n; i++) {
+        if (x[i] == y)
+            f++;
+    }
+    return f;    
 }
 
 
