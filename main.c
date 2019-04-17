@@ -46,6 +46,7 @@ int main()
     char setting[1]; //the character defining the setting as a header 
     char word[1000]; //a word from the text
     char text[10000] = ""; //the text
+    char buffer[1000]; //temporary data
     char rKey[2]; //the key for rotation; N.B. it must have two digits in the header, e.g. 3 = 03
     char sKey[26] = "QAZXSWEDCVFRTGBNHYUJMKIOLP"; //the key for substitution
     char AB[26] = "__________________________"; //the encrytping alphabet
@@ -87,10 +88,6 @@ int main()
         perror("fopen()");
         return 0;
     }
-    
- 
-    FILE *buffer;
-    buffer = fopen("buffer.txt", "w+");
     
     //Finding the setting
     fscanf(input, "%1s", setting);
@@ -263,37 +260,47 @@ int main()
                 AB[(int)cL-65] = 'T';    
             } 
             //Filling in the text
-            fseek(input, 1, SEEK_SET);
-            while (!feof(input)) {
-                fscanf(input, "%s", word);
-                n = length(word);
-                upperCase(word);
-                decryptingAB(AB, dAB);
-                substitution(word, AB);   
-                printf("%s ", word);
-                //Ending the line by at most 100 characters
-                line += n;
-                if (line >= 100) {
-                    printf("\n");
-                    line = 0;
-                }
-                omission(word);
-                fseek(list, 0, SEEK_SET);
-                char entry[1000]; //an entry from the list
-                while (!feof(list)) {
-                    fscanf(list, "%s", entry);
-                    upperCase(entry);
-                    if (length(word) == length(entry)) {
-                        if (frequency(word, '_') == 1) {
-                            n = strcspn(word, "_");
-                            for (char c = 'A'; c <= 'Z'; c++) {
-                                word[n] = c;
-                            }
-                            printf("%s ", word);
-                        }    
-                    } 
-                }
+            for (int i = 0; i < 1; i++) {
+                fseek(input, 1, SEEK_SET);
+                while (!feof(input)) {
+                    fscanf(input, "%s", word);
+                    n = length(word);
+                    upperCase(word);
+                    decryptingAB(AB, dAB);
+                    strcpy(buffer, word);
+                    substitution(buffer, AB);   
+                    printf("%s ", buffer);
+                    //Ending the line by at most 100 characters
+                    line += n;
+                    if (line >= 100) {
+                        printf("\n");
+                        line = 0;
+                    }
+                    omission(buffer);
+                    fseek(list, 0, SEEK_SET);
+                    char entry[1000]; //an entry from the list
+                    while (!feof(list)) {
+                        fscanf(list, "%s", entry);
+                        upperCase(entry);
+                        if (length(buffer) == length(entry)) {
+                            if (frequency(buffer, '_') == 1) {
+                                n = strcspn(buffer, "_");
+                                for (char c = 'A'; c <= 'Z'; c++) {
+                                    buffer[n] = c;
+                                    if ((!strcmp(buffer, entry)) && (strchr(AB, c) == NULL)) {
+                                        AB[(int)word[n]-65] = c;
+                                        printf("(%c) ", c);
+                                        break;
+                                    }
+                                    printf("x ");
+                                }
+                            }    
+                        } 
+                    }
+                }    
+                printf("\n\n");
             }
+            
             
             break;
         case 7:
