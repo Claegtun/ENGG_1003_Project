@@ -263,6 +263,7 @@ int main()
             for (int i = 0; i < 1; i++) {
                 fseek(input, 1, SEEK_SET);
                 while (!feof(input)) {
+                    breaking:
                     fscanf(input, "%s", word);
                     n = length(word);
                     upperCase(word);
@@ -277,25 +278,26 @@ int main()
                         line = 0;
                     }
                     omission(buffer);
-                    fseek(list, 0, SEEK_SET);
-                    char entry[1000]; //an entry from the list
-                    while (!feof(list)) {
-                        fscanf(list, "%s", entry);
-                        upperCase(entry);
-                        if (length(buffer) == length(entry)) {
-                            if (frequency(buffer, '_') == 1) {
+                    if (frequency(buffer, '_') == 1) {
+                        fseek(list, 0, SEEK_SET);
+                        char entry[1000]; //an entry from the list
+                        while (!feof(list)) {
+                            fscanf(list, "%s", entry);
+                            upperCase(entry);
+                            //printf("{%s} ", entry);
+                            if (length(buffer) == length(entry)) {
                                 n = strcspn(buffer, "_");
-                                for (char c = 'A'; c <= 'Z'; c++) {
+                                for (char c = 'R'; c <= 'R'; c++) {
                                     buffer[n] = c;
-                                    if ((!strcmp(buffer, entry)) && (strchr(AB, c) == NULL)) {
+                                    printf("(%s) ", buffer);
+                                    if ((!strcmp(buffer, entry)) && (strchr(AB, (int)c) == NULL)) {
                                         AB[(int)word[n]-65] = c;
-                                        printf("(%c) ", c);
-                                        break;
+                                        printf("[%c] ", c);
+                                        goto breaking;
                                     }
-                                    printf("x ");
-                                }
-                            }    
-                        } 
+                                }  
+                            }
+                        }  
                     }
                 }    
                 printf("\n\n");
