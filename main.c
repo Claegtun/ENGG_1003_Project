@@ -62,6 +62,9 @@ int main()
     int line; //the number of characters in a line
     char cBg[2]; //the most common bigram
     char cTg[3]; //the most common trigram
+    int p; // 'p' for position
+    char alpha; //the beginning character utilised for a FOR-loop in case-5
+    char zeta; //utilised in case-5; the character, that worked for the previous word
     
     /* >>>--------->
       S: Action:
@@ -260,10 +263,11 @@ int main()
                 AB[(int)cL-65] = 'T';    
             } 
             //Filling in the text
-            for (int i = 0; i < 1; i++) {
+            alpha = 'A';
+            for (int i = 0; i < 2; i++) {
                 fseek(input, 1, SEEK_SET);
                 while (!feof(input)) {
-                    breaking:
+                    p = ftell(list) - n;
                     fscanf(input, "%s", word);
                     n = length(word);
                     upperCase(word);
@@ -279,31 +283,24 @@ int main()
                     }
                     omission(buffer);
                     if (frequency(buffer, '_') == 1) {
-                        fseek(list, 0, SEEK_SET);
-                        char entry[1000]; //an entry from the list
-                        while (!feof(list)) {
-                            fscanf(list, "%s", entry);
-                            upperCase(entry);
-                            //printf("{%s} ", entry);
-                            if (length(buffer) == length(entry)) {
-                                n = strcspn(buffer, "_");
-                                for (char c = 'R'; c <= 'R'; c++) {
-                                    buffer[n] = c;
-                                    printf("(%s) ", buffer);
-                                    if ((!strcmp(buffer, entry)) && (strchr(AB, (int)c) == NULL)) {
-                                        AB[(int)word[n]-65] = c;
-                                        printf("[%c] ", c);
-                                        goto breaking;
-                                    }
-                                }  
+                        n = strcspn(buffer, "_");
+                        p = 0;
+                        for (char c = 'A'; c <= 'Z'; c++) {
+                            buffer[n] = c;
+                            if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
+                                p++;
+                                zeta = c;
                             }
                         }  
+                        //printf("[%d] ", p);
+                        if (p == 1) {
+                            AB[(int)word[n]-65] = zeta;
+                            //printf("{%c} ", zeta);    
+                        }
                     }
                 }    
-                printf("\n\n");
             }
-            
-            
+            printf("\nAB: %s", AB);
             break;
         case 7:
             printf("EASTER EGG\n");
@@ -313,7 +310,6 @@ int main()
             ploughman++;
             if (ploughman != 9) 
                 goto arrow; //who says, that one can not make a while loop using GOTO?
-            printf("%d", frequency("ggafg''./gg2gaf2 5ga236ygyg", 'g')); //testing frequency()
             break;
         default:
             printf("Invalid S");
