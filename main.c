@@ -37,6 +37,7 @@ int trigram(char *x, char *y);
     //returns the number of trigrams, that were considered
 int frequency(char *x, char y);
     //returns the frequency of the character 'y' in the string 'x'
+char consective(char *x);
 
 //>>>---------> >>>---------> Main <---------<<< <---------<<<
 
@@ -65,6 +66,8 @@ int main()
     int p; // 'p' for position
     char alpha; //the beginning character utilised for a FOR-loop in case-5
     char zeta; //utilised in case-5; the character, that worked for the previous word
+    int w0, w1; //the number of incomplete words, i.e. with an '_'
+    char cC; //the most common consective letter
     
     /* >>>--------->
       S: Action:
@@ -241,22 +244,23 @@ int main()
                 n = length(word);
                 upperCase(word);
                 strcat(text, word);
+                strcat(text, " ");
             }
-            //Getting the most common letter from which
+            //Getting statistics
             n = length(text);
-            cL = letter(text);
-            //Getting the most common bigram from which
-            line = bigram(text, cBg);
-            //Getting the most common trigram from which
-            trigram(text, cTg);
-            printf("%c %s %s\n", cL, cBg, cTg);
+            cL = letter(text);//getting the most common letter
+            bigram(text, cBg); //getting the most common bigram
+            trigram(text, cTg); //getting the most common trigram
+            cC = consective(text); 
+            printf("%c %s %s %c\n", cL, cBg, cTg, cC);
             //Making an alphabet
             if (!strncmp(cTg, cBg, 2)) {
                 AB[(int)cTg[0]-65] = 'T';
                 AB[(int)cTg[1]-65] = 'H';
                 AB[(int)cTg[2]-65] = 'E';
-            } 
-            if (cBg[2] == cL) {
+            }
+            //else if (!strncmp(cTg, cBg, ))
+            if (cBg[1] == cL) {
                 AB[(int)cL-65] = 'E';    
             } 
             if (cBg[0] == cL) {
@@ -264,7 +268,10 @@ int main()
             } 
             //Filling in the text
             alpha = 'A';
-            for (int i = 0; i < 2; i++) {
+            w0 = 1; w1 = 0;
+            while (w0 != w1) {
+                w0 = w1;
+                w1 = 0;
                 fseek(input, 1, SEEK_SET);
                 while (!feof(input)) {
                     p = ftell(list) - n;
@@ -282,25 +289,30 @@ int main()
                         line = 0;
                     }
                     omission(buffer);
-                    if (frequency(buffer, '_') == 1) {
-                        n = strcspn(buffer, "_");
-                        p = 0;
-                        for (char c = 'A'; c <= 'Z'; c++) {
-                            buffer[n] = c;
-                            if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
-                                p++;
-                                zeta = c;
+                    if (frequency(buffer, '_') > 0) {
+                        w1++;
+                        if (frequency(buffer, '_') == 1) {
+                            n = strcspn(buffer, "_");
+                            p = 0;
+                            for (char c = 'A'; c <= 'Z'; c++) {
+                                buffer[n] = c;
+                                if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
+                                    p++;
+                                    zeta = c;
+                                }
+                            }  
+                            //printf("[%d] ", p);
+                            if (p == 1) {
+                                AB[(int)word[n]-65] = zeta;
+                                //printf("{%c} ", zeta);    
                             }
-                        }  
-                        //printf("[%d] ", p);
-                        if (p == 1) {
-                            AB[(int)word[n]-65] = zeta;
-                            //printf("{%c} ", zeta);    
                         }
                     }
-                }    
+                }  
+                printf("%d\n\n", w1);
             }
-            printf("\nAB: %s", AB);
+            printf("AB: %s\n", AB);
+            
             break;
         case 7:
             printf("EASTER EGG\n");
@@ -498,6 +510,27 @@ int frequency(char *x, char y) {
     return f;    
 }
 
+char consective(char *x) {
+    char l; //'l' for letter to be tested
+    char c = '@'; //'c' for the character being tested; '@' is the default, if there was no most common consective letter
+    int f; //'f' for frequency of the letter
+    int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
+    int m = 0; //'m' for maximum frequency of a letter
+    int n; n = length(x);
+    for (l = 'A'; l <= 'Z'; l++) {
+        f = 0;
+        for (int i = 0; i < n-1; i++) {
+            if ((x[i] == l) && (x[i+1] == l)) {
+                f++;
+            }        
+        }
+        if (f > m) {
+            m = f;
+            c = l;
+        }    
+    }
+    return c;
+}
 
 
 
