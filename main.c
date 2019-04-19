@@ -244,7 +244,7 @@ int main()
                 n = length(word);
                 upperCase(word);
                 strcat(text, word);
-                strcat(text, " ");
+                //strcat(text, " ");
             }
             //Getting statistics
             n = length(text);
@@ -266,6 +266,9 @@ int main()
             if (cBg[0] == cL) {
                 AB[(int)cL-65] = 'T';    
             } 
+            if (cL != cC) {
+                AB[(int)cC-65] = 'S';
+            }
             //Filling in the text
             alpha = 'A';
             w0 = 1; w1 = 0;
