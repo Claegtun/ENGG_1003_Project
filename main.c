@@ -53,7 +53,7 @@ int main()
     char AB[26] = "__________________________"; //the encrytping alphabet
     char dAB[26]; //the decrypting alphabet
     char mC[6] = " ETAOI"; //the first five most common letters in the Modern English language from http://letterfrequency.org/
-    char mB[9] = " THERON"; //the first four most common bigrams in the Modern English language from https://en.wikipedia.org/wiki/Frequency_analysis
+    char mB[] = "THHEINERANREONATENNDTIESORTEOFEDISITALARSTNTTOSECODERAETSAEMRO"; //the first four most common bigrams in the Modern English language from https://blogs.sas.com/content/iml/2014/09/26/bigrams.html
     char mR[5] = " SETF"; //the first four most common repeated letters in the Modern English language from https://en.wikipedia.org/wiki/Frequency_analysis
     int r; //'r' for rotator, i.e. the integer of the rKey
     int n; //length
@@ -286,13 +286,8 @@ int main()
                 }
             } 
             if (cBg[0] == cL) {
-                if (cL == cTg[2]) {
-                    AB[(int)cBg[0]-65] = 'T';
-                    AB[(int)cBg[1]-65] = 'H';
-                } else {
-                    AB[(int)cBg[0]-65] = 'E';
-                    AB[(int)cBg[1]-65] = 'R';
-                }
+                AB[(int)cBg[0]-65] = 'T';
+                AB[(int)cBg[1]-65] = 'H';
             }
             //Filling in the text
             w0 = 1; w1 = 0;
@@ -331,25 +326,23 @@ int main()
                                 AB[(int)word[p0]-65] = zeta;
                             }
                         }
-                        /*else if (frequency(buffer, '_') == 2) {
+                        else if ((frequency(buffer, '_') == 2) && (strstr(buffer, "__"))) {
                             p0 = (int)(strchr(buffer, '_') - buffer);
-                            p1 = (int)(strrchr(buffer, '_') - buffer);
-                            printf("(%d %d) ", p0, p1);
+                            printf("(%d) ", p0);
                             e = 0;
-                            for (char c = 'A'; c <= 'Z'; c++) {
-                                buffer[p0] = c;
-                                for (char c1 = 'A'; c1 <= 'Z'; c1++) {
-                                    buffer[p1] = c1;
-                                    if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
-                                        e++;
-                                        zeta = c;
-                                    }   
-                                } 
+                            for (int i = 0; i < length(mB); i += 2) {
+                                buffer[p0] = mB[i];
+                                buffer[p0+1] = mB[i+1];
+                                if ((trial(buffer, list)) && (strchr(AB, mB[i]) == NULL) && (strchr(AB, mB[i+1]) == NULL)) {
+                                    e++;
+                                    alpha = mB[i]; zeta = mB[i+1];
+                                }   
                             }  
                             if (e == 1) {
-                                AB[(int)word[p0]-65] = zeta;
+                                AB[(int)word[p0]-65] = alpha; AB[(int)word[p0+1]-65] = zeta;
+                                printf("[%c%c] ", alpha, zeta);
                             }
-                        }*/
+                        }
                     }
                 }  
                 printf("%d\n\n", w1);
@@ -365,7 +358,6 @@ int main()
             ploughman++;
             if (ploughman != 9) 
                 goto arrow; //who says, that one can not make a while loop using GOTO?
-            break;
         default:
             printf("Invalid S");
     }   
