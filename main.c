@@ -63,7 +63,8 @@ int main()
     int line; //the number of characters in a line
     char cBg[2]; //the most common bigram
     char cTg[3]; //the most common trigram
-    int p; // 'p' for position
+    int p0, p1; //'p' for position
+    int e; //'e' for the number of entries
     char alpha; //the beginning character utilised for a FOR-loop in case-5
     char zeta; //utilised in case-5; the character, that worked for the previous word
     int w0, w1; //the number of incomplete words, i.e. with an '_'
@@ -255,29 +256,51 @@ int main()
             printf("%c %s %s %c\n", cL, cBg, cTg, cC);
             //Making an alphabet
             if (!strncmp(cTg, cBg, 2)) {
+                if ((cTg[2] == cL) || (cTg[0] == cL)) {
+                    AB[(int)cTg[0]-65] = 'T';
+                    AB[(int)cTg[1]-65] = 'H';
+                    AB[(int)cTg[2]-65] = 'E';
+                } else {
+                    AB[(int)cTg[0]-65] = 'I';
+                    AB[(int)cTg[1]-65] = 'N';
+                    AB[(int)cTg[2]-65] = 'G';
+                } 
+            } else if (strspn(cTg, cBg) != 0) {
                 AB[(int)cTg[0]-65] = 'T';
                 AB[(int)cTg[1]-65] = 'H';
-                AB[(int)cTg[2]-65] = 'E';
+                AB[(int)cTg[2]-65] = 'E';    
+            } else if ((cTg[2] == cL) || (cTg[0] == cL)) {
+                AB[(int)cTg[0]-65] = 'E';
+                AB[(int)cTg[1]-65] = 'N';
+                AB[(int)cTg[2]-65] = 'T'; 
+            } else {
+                AB[(int)cTg[0]-65] = 'A';
+                AB[(int)cTg[1]-65] = 'N';
+                AB[(int)cTg[2]-65] = 'D'; 
             }
-            //else if (!strncmp(cTg, cBg, ))
             if (cBg[1] == cL) {
-                AB[(int)cL-65] = 'E';    
+                AB[(int)cL-65] = 'E';
+                if (strcmp(cBg, "HE")) {
+                    AB[(int)cBg[0]-65] = 'R';
+                    AB[(int)cBg[1]-65] = 'E';
+                }
             } 
             if (cBg[0] == cL) {
-                AB[(int)cL-65] = 'T';    
-            } 
-            if (cL != cC) {
-                AB[(int)cC-65] = 'S';
+                if (cL == cTg[2]) {
+                    AB[(int)cBg[0]-65] = 'T';
+                    AB[(int)cBg[1]-65] = 'H';
+                } else {
+                    AB[(int)cBg[0]-65] = 'E';
+                    AB[(int)cBg[1]-65] = 'R';
+                }
             }
             //Filling in the text
-            alpha = 'A';
             w0 = 1; w1 = 0;
             while (w0 != w1) {
                 w0 = w1;
                 w1 = 0;
                 fseek(input, 1, SEEK_SET);
                 while (!feof(input)) {
-                    p = ftell(list) - n;
                     fscanf(input, "%s", word);
                     n = length(word);
                     upperCase(word);
@@ -295,21 +318,38 @@ int main()
                     if (frequency(buffer, '_') > 0) {
                         w1++;
                         if (frequency(buffer, '_') == 1) {
-                            n = strcspn(buffer, "_");
-                            p = 0;
+                            p0 = (int)(strchr(buffer, '_') - buffer);
+                            e = 0;
                             for (char c = 'A'; c <= 'Z'; c++) {
-                                buffer[n] = c;
+                                buffer[p0] = c;
                                 if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
-                                    p++;
+                                    e++;
                                     zeta = c;
                                 }
                             }  
-                            //printf("[%d] ", p);
-                            if (p == 1) {
-                                AB[(int)word[n]-65] = zeta;
-                                //printf("{%c} ", zeta);    
+                            if (e == 1) {
+                                AB[(int)word[p0]-65] = zeta;
                             }
                         }
+                        /*else if (frequency(buffer, '_') == 2) {
+                            p0 = (int)(strchr(buffer, '_') - buffer);
+                            p1 = (int)(strrchr(buffer, '_') - buffer);
+                            printf("(%d %d) ", p0, p1);
+                            e = 0;
+                            for (char c = 'A'; c <= 'Z'; c++) {
+                                buffer[p0] = c;
+                                for (char c1 = 'A'; c1 <= 'Z'; c1++) {
+                                    buffer[p1] = c1;
+                                    if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
+                                        e++;
+                                        zeta = c;
+                                    }   
+                                } 
+                            }  
+                            if (e == 1) {
+                                AB[(int)word[p0]-65] = zeta;
+                            }
+                        }*/
                     }
                 }  
                 printf("%d\n\n", w1);
