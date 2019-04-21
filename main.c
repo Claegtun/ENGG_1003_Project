@@ -26,7 +26,7 @@ char letter(char *x);
 int omission(char *x); 
     //omits any punctuation (except '_') or non-Latin (nor upper-case) character at the end of a string 'x'
     //returns 1, if there was a non-Latin (nor upper-case) character at the end; returns 0 otherwise
-int trial(char *x, FILE *f); 
+int trial(char *x, char *y, FILE *f); 
     //returns 1, if the string 'x' is contain in the list of common English words; 
     //returns 0 otherwise or if the file list.txt is empty
 int bigram(char *x, char *y);
@@ -174,7 +174,7 @@ int main()
                     //Omission of punctuation at the end
                     omission(word);
                     //Trial by spelling
-                    englishWords += trial(word, list);
+                    englishWords += trial(word, AB, list);
                 }
                 englishness = (float)englishWords / (float)w;
                 if (englishness > highest) {
@@ -310,9 +310,37 @@ int main()
                         line = 0;
                     }
                     omission(buffer);
-                    if (frequency(buffer, '_') > 0) {
+                    p0 = (int)(strchr(buffer, '_') - buffer);
+                    p1 = (int)(strrchr(buffer, '_') - buffer);
+                    if ((frequency(buffer, '_') > 0) && (length(buffer) != 1)) {
                         w1++;
                         if (frequency(buffer, '_') == 1) {
+                            char buffer1[100];
+                            char buffer2[100];
+                            char entry[100];
+                            e = 0;
+                            fseek(list, 0, SEEK_SET);
+                            while (!feof(list)) {
+                                fscanf(list, "%s", entry);
+                                upperCase(entry);
+                                if (length(entry) == length(buffer)) {
+                                    strcpy(buffer1, entry);
+                                    entry[p0] = '_';  
+                                    if (!strcmp(buffer, entry)) {
+                                        if (frequency(AB, buffer1[p0]) == 0) {
+                                            e++;
+                                            printf("[%s] ", buffer1);
+                                            strcpy(buffer2, buffer1);
+                                        }
+                                    }   
+                                }
+                            }
+                            printf("(%d) ", e);
+                            if (e == 1) {
+                                AB[(int)word[p0]-65] = buffer2[p0];          
+                            }
+                        }
+                        /*if (frequency(buffer, '_') == 1) {
                             p0 = (int)(strchr(buffer, '_') - buffer);
                             e = 0;
                             for (char c = 'A'; c <= 'Z'; c++) {
@@ -325,23 +353,33 @@ int main()
                             if (e == 1) {
                                 AB[(int)word[p0]-65] = zeta;
                             }
-                        }
-                        else if ((frequency(buffer, '_') == 2) && (strstr(buffer, "__"))) {
-                            p0 = (int)(strchr(buffer, '_') - buffer);
-                            printf("(%d) ", p0);
+                        }*/
+                        else if (frequency(buffer, '_') == 2) {
+                            char buffer1[100];
+                            char buffer2[100];
+                            char entry[100];
                             e = 0;
-                            for (int i = 0; i < length(mB); i += 2) {
-                                buffer[p0] = mB[i];
-                                buffer[p0+1] = mB[i+1];
-                                if ((trial(buffer, list)) && (strchr(AB, mB[i]) == NULL) && (strchr(AB, mB[i+1]) == NULL)) {
-                                    e++;
-                                    alpha = mB[i]; zeta = mB[i+1];
-                                }   
-                            }  
-                            if (e == 1) {
-                                AB[(int)word[p0]-65] = alpha; AB[(int)word[p0+1]-65] = zeta;
-                                printf("[%c%c] ", alpha, zeta);
+                            fseek(list, 0, SEEK_SET);
+                            while (!feof(list)) {
+                                fscanf(list, "%s", entry);
+                                upperCase(entry);
+                                if (length(entry) == length(buffer)) {
+                                    strcpy(buffer1, entry);
+                                    entry[p0] = '_'; 
+                                    entry[p1] = '_';
+                                    if (!strcmp(buffer, entry)) {
+                                        if ((frequency(AB, buffer1[p0]) == 0) && (frequency(AB, buffer1[p1]) == 0)) {
+                                            e++;
+                                            strcpy(buffer2, buffer1);
+                                        }
+                                    }   
+                                }
                             }
+                            if (e == 1) {
+                                AB[(int)word[p0]-65] = buffer2[p0];   
+                                AB[(int)word[p1]-65] = buffer2[p1];
+                                printf("(%d) [%s] ", e, buffer2);
+                            }   
                         }
                     }
                 }  
@@ -472,15 +510,15 @@ int omission(char *x) {
     return f; 
 }
 
-int trial(char *x, FILE *f) {
+int trial(char *x, char *y, FILE *f) {
     fseek(f, 0, SEEK_SET);
     char entry[1000]; //an entry from the list
     while (!feof(f)) {
         fscanf(f, "%s", entry);
         upperCase(entry);
         if (!strcmp(x, entry)) {
-           return 1;
-        }
+            return 1;
+        }    
     }
     return 0;
 }
