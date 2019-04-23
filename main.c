@@ -47,7 +47,8 @@ int main()
     int e; //'e' for the number of entries
     char alpha; //the beginning character utilised for a FOR-loop in case-5
     char zeta; //utilised in case-5; the character, that worked for the previous word
-    int w0, w1; //the number of incomplete words, i.e. with an '_'
+    int w; //the number of words
+    int iW0, iW1; //the number of incomplete words, i.e. with an '_'
     char cC; //the most common consecutive letter
     
     /* >>>--------->
@@ -135,7 +136,8 @@ int main()
             //Printing relevant data
             printf("Rotational decrytion without key\n"); fprintf(output, "Rotational decrytion without key\n");
             printf("Most common letter found: %c\n", cL); fprintf(output, "Most common letter found: %c\n", cL);
-            printf("Character tested:   Words:  English* words:  Englishness:\n"); fprintf(output, "Character tested:   Words:  English* words:  Englishness:\n");
+            printf("Character tested:   Words:  English* words:  Englishness:\n"); 
+            fprintf(output, "Character tested:   Words:  English* words:  Englishness:\n");
             //Trial for each common letter
             for (int i = 1; i < 6; i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor
@@ -233,7 +235,7 @@ int main()
             bigram(text, cBg); //getting the most common bigram
             trigram(text, cTg); //getting the most common trigram
             cC = consecutive(text); 
-            printf("%c %s %s %c\n", cL, cBg, cTg, cC);
+            printf("Most common letter found: %c\nMost common bigram: %s\nMost common trigram: %s\nMost common repetition: %c\n", cL, cBg, cTg, cC);
             //Making an alphabet
             if (!strncmp(cTg, cBg, 2)) {
                 if ((cTg[2] == cL) || (cTg[0] == cL)) {
@@ -245,10 +247,10 @@ int main()
                     AB[(int)cTg[1]-65] = 'N';
                     AB[(int)cTg[2]-65] = 'G';
                 } 
-            } else if (strspn(cTg, cBg) != 0) {
+            } else if ((cTg[1] == cBg[0]) && (cTg[2] == cBg[1])) {
                 AB[(int)cTg[0]-65] = 'T';
                 AB[(int)cTg[1]-65] = 'H';
-                AB[(int)cTg[2]-65] = 'E';    
+                AB[(int)cTg[2]-65] = 'E';  
             } else if ((cTg[2] == cL) || (cTg[0] == cL)) {
                 AB[(int)cTg[0]-65] = 'E';
                 AB[(int)cTg[1]-65] = 'N';
@@ -260,40 +262,39 @@ int main()
             }
             if (cBg[1] == cL) {
                 AB[(int)cL-65] = 'E';
-                if (strcmp(cBg, "HE")) {
-                    AB[(int)cBg[0]-65] = 'R';
-                    AB[(int)cBg[1]-65] = 'E';
-                }
             } 
             if (cBg[0] == cL) {
                 AB[(int)cBg[0]-65] = 'T';
                 AB[(int)cBg[1]-65] = 'H';
             }
+            printf("Beginning alphabet: %s\n", AB);
             //Filling in the text
-            w0 = 1; w1 = 0;
-            while (w0 != w1) {
-                w0 = w1;
-                w1 = 0;
+            iW0 = 1; iW1 = 0; 
+            while (iW0 != iW1) {
+                iW0 = iW1;
+                iW1 = 0;
                 fseek(input, 1, SEEK_SET);
+                line = 0;
+                w = 0;
                 while (!feof(input)) {
+                    w++;
                     fscanf(input, "%s", word);
                     n = strlen(word);
                     upperCase(word);
-                    decryptingAB(AB, dAB);
                     strcpy(buffer, word);
                     substitution(buffer, AB);   
-                    printf("%s ", buffer);
+                    //printf("%s ", buffer);
                     //Ending the line by at most 100 characters
                     line += n;
                     if (line >= 100) {
-                        printf("\n");
+                        //printf("\n");
                         line = 0;
                     }
                     omission(buffer);
                     p0 = (int)(strchr(buffer, '_') - buffer);
                     p1 = (int)(strrchr(buffer, '_') - buffer);
                     if ((frequency(buffer, '_') > 0) && (strlen(buffer) != 1)) {
-                        w1++;
+                        iW1++;
                         if (frequency(buffer, '_') == 1) {
                             char buffer1[100];
                             char buffer2[100];
@@ -309,31 +310,15 @@ int main()
                                     if (!strcmp(buffer, entry)) {
                                         if (frequency(AB, buffer1[p0]) == 0) {
                                             e++;
-                                            printf("[%s] ", buffer1);
                                             strcpy(buffer2, buffer1);
                                         }
                                     }   
                                 }
                             }
-                            printf("(%d) ", e);
                             if (e == 1) {
                                 AB[(int)word[p0]-65] = buffer2[p0];          
                             }
                         }
-                        /*if (frequency(buffer, '_') == 1) {
-                            p0 = (int)(strchr(buffer, '_') - buffer);
-                            e = 0;
-                            for (char c = 'A'; c <= 'Z'; c++) {
-                                buffer[p0] = c;
-                                if ((trial(buffer, list)) && (strchr(AB, c) == NULL)) {
-                                    e++;
-                                    zeta = c;
-                                }
-                            }  
-                            if (e == 1) {
-                                AB[(int)word[p0]-65] = zeta;
-                            }
-                        }*/
                         else if (frequency(buffer, '_') == 2) {
                             char buffer1[100];
                             char buffer2[100];
@@ -358,15 +343,28 @@ int main()
                             if (e == 1) {
                                 AB[(int)word[p0]-65] = buffer2[p0];   
                                 AB[(int)word[p1]-65] = buffer2[p1];
-                                printf("(%d) [%s] ", e, buffer2);
                             }   
                         }
                     }
                 }  
-                printf("%d\n\n", w1);
             }
-            printf("AB: %s\n", AB);
-            
+            fseek(input, 1, SEEK_SET);
+            printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
+            while (!feof(input)) {
+                fscanf(input, "%s", word);
+                n = strlen(word);
+                upperCase(word);
+                decryptingAB(AB, dAB);
+                substitution(word, AB);    
+                printf("%s ", word); fprintf(output, "%s ", word);
+                //Ending the line by at most 100 characters
+                line += n;
+                if (line >= 100) {
+                    printf("\n"); fprintf(output, "\n");
+                    line = 0;
+                }
+            }
+            printf("\nNumber of total words: %d\nNumber of incomplete words: %d\nSuccess: %f%\nFinal alphabet: %s\n", w, iW1, (float)(w-iW1)/(float)w*100, AB);
             break;
         case 7:
             printf("EASTER EGG\n");
