@@ -1,0 +1,23 @@
+S: Action:									Notes:
+0  Rotational encryption					Followed by the key in two-digits
+1  Rotational decryption with key			Followed by the key in two-digits
+2  Rotational decryption without key		Nothing is to follow except the cipher
+3  Substitutional encryption with key		Followed by 26-characters being the key
+4  Substitutional decryption with key		Followed by 26-characters being the key
+5  Substitutional decryption without key	Nothing is to follow except the cipher
+>>>--------->
+Setting: 5 i.e. Substitutional decrytion without key
+Most common letter found: F
+Most common bigram: FH
+Most common trigram: BKF
+Most common repetition: I
+Beginning alphabet: _E___T____N_______________
+>>>--------->
+Decrypted text:
+_ NE_ ___ENT____ T__T_ __E_ N_T T______ __ __N__N__N_ _T_ ____NENT_ _N_ ____N_ T_E_ _EE T_E ____T, __T __T_E_ _E____E _T_ 
+____NENT_ E_ENT_____ __E, _N_ _ NE_ _ENE__T__N _____ __ T__T __ ________ __T_ _T. - ___ ___N__ 
+>>>--------->
+Number of total words: 38
+Number of incomplete words: 37
+Success: 2.631579%
+Final alphabet: _E___T____N_______________
