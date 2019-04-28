@@ -164,7 +164,7 @@ int main()
             for (int i = 0; i < strlen(mC); i++) {
                 fseek(input, 1, SEEK_SET); //beginning the cursor at the beginning
                 r = (int)(cL - mC[i]); //the new rotator from the most common encrypted letter found and the predicted letter
-                w = 0; englishWords = 0; //reseting the word-count
+                w = 0; englishWords = 0; //resetting the word-count
                 //Decryption of the text with this prediction
                 while (!feof(input)) {
                     w++; //increment of the word-count
@@ -271,10 +271,10 @@ int main()
             cL = letter(text);//getting the most common letter
             bigram(text, cBg); //getting the most common bigram
             trigram(text, cTg); //getting the most common trigram
-            printf("Most common letter found: %c\nMost common bigram: %s\nMost common trigram: %s\nMost common repetition: %c\n", cL, cBg, cTg, cC);
-            fprintf(output, "Most common letter found: %c\nMost common bigram: %s\nMost common trigram: %s\nMost common repetition: %c\n", cL, cBg, cTg, cC);
+            printf("Most common letter found: %c\nMost common bigram: %s\nMost common trigram: %s\n", cL, cBg, cTg);
+            fprintf(output, "Most common letter found: %c\nMost common bigram: %s\nMost common trigram: %s\n", cL, cBg, cTg);
             //Making an alphabet by prediction
-            /* The following predictions is from: http://practicalcryptography.com/cryptanalysis/letter-frequencies-various-languages/english-letter-frequencies/; 
+            /* The following predictions are from: http://practicalcryptography.com/cryptanalysis/letter-frequencies-various-languages/english-letter-frequencies/; 
             this website was also helpful: https://www3.nd.edu/~busiforc/handouts/cryptography/cryptography%20hints.html
             The five most common bigrams: TH, HE, IN, ER, AN
             The five most common trigrams: THE, AND, ING, ENT, ION*/
@@ -328,8 +328,8 @@ int main()
             //if the current count of incomplete words is equal to the previous one, then now new letter has been found and the loop ends.
             while (iW0 != iW1) {
                 iW0 = iW1;
-                iW1 = 0; //reseting the count
-                fseek(input, 1, SEEK_SET); //reseting the cursor at the beginning of the 'input' file
+                iW1 = 0; //resetting the count
+                fseek(input, 1, SEEK_SET); //resetting the cursor at the beginning of the 'input' file
                 w = 0; //the total word-count
                 while (!feof(input)) {
                     w++; //the increment of the word-count
@@ -348,7 +348,7 @@ int main()
                     //Another condition is, that it is not a single letter word, since the list has single letters like 'b' as possible 'words'.
                     if ((frequency(buffer, '_') == 1) && (strlen(buffer) != 1)) {
                         e = 0; //the number of possible entries
-                        fseek(list, 0, SEEK_SET); //reseting the cursor for the 'list' file
+                        fseek(list, 0, SEEK_SET); //resetting the cursor for the 'list' file
                         //The following WHILE-loop goes through every entry.
                         while (!feof(list)) {
                             fscanf(list, "%s", entry); //getting the entry from the 'list' file
@@ -413,7 +413,7 @@ int main()
             /* Once the above WHILE-loop ends, i.e. no more new letters can be updated to the substitutional alphabet, then the cipher is fully decrypted with
             this final alphabet as in susbtitutional decryption with key in case 4.*/
             fseek(input, 1, SEEK_SET);
-            line = 0; //reseting the count of characters for making a new-line
+            line = 0; //resetting the count of characters for making a new-line
             printf(">>>--------->\n"); fprintf(output, ">>>--------->\n");//divider
             printf("Decrypted text:\n"); fprintf(output, "Decrypted text:\n");
             while (!feof(input)) {
@@ -501,12 +501,15 @@ int substitution(char *x, char *y) {
     int il; //integer of 'l'
     int f = 0; //'f' for flag
     int n; n = strlen(x); //'n' for length
+    //The FOR-loop goes through every character, i.e. element of the string 'x'. This character is 'x[i]', and the integer 'i' is between 0, and 'n'.
     for (int i = 0; i < n; i++) {
-        l = x[i];
+        l = x[i]; //'l' is the variable of the character.
         if ((l >= 'A') && (l <= 'Z')) {
-            il = (int)l - 65;
-            l = y[il];
-            f = 1;
+            /* If the letter is an upper-case Latin letter, then the current letter is altered to the corresponding letter in the alphabet by its 
+            integer-value, i.e. the il-th element of the string 'y'.*/
+            il = (int)l - 65; //getting the integer-identifier, e.g. A:0, B:1, ..., Z:25. N.B. the character literal must be casted to an integer firstly.
+            l = y[il]; //making the current letter as the corresponding one in the string 'y'.
+            f = 1; //updating the flag
         }  
         x[i] = l; //The original element in the string 'x' is altered to the new upper-case letter.
     } 
@@ -523,12 +526,15 @@ int decryptingAB(char *x, char *y) {
     char l; //'l' for letter
     int il; //integer of 'l'
     int f = 0; //'f' for flag
+    //The FOR-loop goes through every letter of the substitutional alphabet 'x', or key.
     for (int i = 0; i < 26; i++) {
-        l = x[i];
+        l = x[i]; //'l' is the variable of the character.
         if ((l >= 'A') && (l <= 'Z')) {
-            il = (int)l - 65;
-            y[il] = (char)(i + 65);
-            f = 1;
+            /* If the letter is an upper-case Latin letter, then the current letter's position in the decrypting alphabet 'y' is assign to the letter of the 
+            current letter's position in the key 'x'. E.g. if A:K, then K = 10th position of 'y' becomes, the i-th letter of the alphabet, i.e. 'A'.*/
+            il = (int)l - 65; //getting the integer-identifier, e.g. A:0, B:1, ..., Z:25. N.B. the character literal must be casted to an integer firstly.
+            y[il] = (char)(i + 65); //the corresponding the character of the decrypting alphabet is made to be the letter of the position in the key.
+            f = 1; //updating the flag
         }
     }
     return f; 
@@ -543,17 +549,13 @@ char letter(char *x) {
     int f; //'f' for frequency of the letter
     int m = 0; //'m' for maximum frequency of a letter
     char cL = 'A'; //the letter, that has the maxmimum frequency 
-    int n; n = strlen(x); //'n' for length
+    //The FOR-loop goes through every letter of the alphabet and calculates the frequency by the function frequency().
     for (l = 'A'; l <= 'Z'; l++) {
-        f = 0;
-        for (int i = 0; i < n; i++) {
-            if (x[i] == l) {
-                f++;
-            }        
-        }
+        f = frequency(x, l);
         if (f >= m) {
-            m = f;
-            cL = l;
+            /* If the current frequency is greater than the previously highest one, then it is updated.*/
+            m = f; //updating the highest frequency
+            cL = l; //updating the most common letter yet
         }
     }
     return cL;
@@ -561,16 +563,17 @@ char letter(char *x) {
 /* Inputs: the string 'x' to be modified
  * Return value: returns 1, if a character was omitted at the end; returns 0, if otherwise
  * Description: omits any non-Latin non-upper-case character (except '_') at the end of the string
+ * N.B. that '_' is not included, so that it can be utilised for the substitutional decryption without key.
  */
 int omission(char *x) {
     char y[1000] = ""; //temporary string
     int f = 0; //'f' for flag
     int n; n = strlen(x); //'n' for length
+    //If the last letter is not an upper-case Latin letter or not an underscore, then one knows, that a contraband character is there, and the following occurs.
     if (((x[n-1] < 'A') || (x[n-1] > 'Z')) && (x[n-1] != '_')) {
-        //'_' is not included, so that it can be utilised for the substitutional decryption withou key
-        strxfrm(y, x, n-1);
-        strcpy(x, y);
-        f = 1;
+        strxfrm(y, x, n-1); //This function from 'string.h' copies the all the characters until the last character, which is known to be contraband.
+        strcpy(x, y); //This new string 'y' is copied to original string 'x'.
+        f = 1; //updating the flag
     }
     return f; 
 }
@@ -579,16 +582,17 @@ int omission(char *x) {
  * Description: tests, whether the string is in the file or not
  */
 int trial(char *x, FILE *f) {
-    fseek(f, 0, SEEK_SET);
+    fseek(f, 0, SEEK_SET); //resetting the file 'f' from any previous actions
     char entry[1000]; //an entry from the list
     while (!feof(f)) {
-        fscanf(f, "%s", entry);
-        upperCase(entry);
+        /* This WHILE-loop goes through the entire file 'f' and tests, if it is equal to the string 'x'.*/
+        fscanf(f, "%s", entry); //getting the next entry in the file 'f', i.e. until a space
+        upperCase(entry); //converting to upper-case for the testing
         if (!strcmp(x, entry)) {
-            return 1;
+            return 1; //If the entry is equal, then the string 'x' is in the file.
         }    
     }
-    return 0;
+    return 0; //If the WHILE-loop ends, then there was no entry, that was equal, and the string 'x' is thus not in the file.
 }
 /* Inputs: the string 'x' to be search within, N.B. the string 'y' can be any string with at least 2 elements
  * Outputs: the resultant bigram 'y' as a string
@@ -599,21 +603,27 @@ int trial(char *x, FILE *f) {
 int bigram(char *x, char *y) {
     char l0, l1; //'l' for letter to be tested
     int f; //'f' for frequency of the letter
-    int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
+    int i = 0; //the number of assignments
     int m = 0; //'m' for maximum frequency of a letter
     int n; n = strlen(x); //'n' for length
+    //These two FOR-loops go through every possible combination of two letters.
     for (l0 = 'A'; l0 <= 'Z'; l0++) {
         for (l1 = 'A'; l1 <= 'Z'; l1++) {
-            f = 0;
-            for (int i = 0; i < n-1; i++) {
-                if ((x[i] == l0) && (x[i+1] == l1)) {
-                    f++;
+            f = 0; //resetting the frequency
+            /* The FOR-loop goes through every pair of consectutive characters, i.e. elements of the string 'x'. This pair is made of the two elements 'x[i]' 
+            and 'x[i+1]'' in the interval [0, n-1], since 'x[n]'' will be the last character.*/
+            for (int j = 0; j < n-1; j++) {
+                if ((x[j] == l0) && (x[j+1] == l1)) {
+                    /* If the two letters of the pair, i.e. 'x[i]', and 'x[i+1]', are equal to the combination, i.e. 'l0', and 'l1', the frequency is 
+                    increased.*/
+                    f++; 
                 }        
             }
             if (f > m) {
-                m = f;
-                y[0] = l0; y[1] = l1;
-                i++;
+                /* If the frequency of the current combination is greater than the previous, then it is updated.*/
+                m = f; //updating the highest frequency 
+                y[0] = l0; y[1] = l1; //updating both the letters of the most common bigram yet.
+                i++; //updating the count of assignments
             }    
         }
     }
@@ -631,19 +641,25 @@ int trigram(char *x, char *y) {
     int i = 0; //the number of assignments, N.B. this is not to be confused with 'i' in the third FOR-loop, which is in a different scope
     int m = 0; //'m' for maximum frequency of a letter
     int n; n = strlen(x); //'n' for length
+    //These three FOR-loops go through every possible combination of three letters.
     for (l0 = 'A'; l0 <= 'Z'; l0++) {
         for (l1 = 'A'; l1 <= 'Z'; l1++) {
             for (l2 = 'A'; l2 <= 'Z'; l2++) {
-                f = 0;
+                f = 0; //resetting the frequency
+                /* The FOR-loop goes through every triplet of consectutive characters, i.e. elements of the string 'x'. This pair is made of the three elements 
+                'x[i]', 'x[i+1],and 'x[i+2]'' in the interval [0, n-2], since 'x[n]'' will be the last character.*/
                 for (int i = 0; i < n-2; i++) {
                     if ((x[i] == l0) && (x[i+1] == l1) && (x[i+2] == l2)) {
+                        /* If the three letters of the triplet, i.e. 'x[i]', 'x[i+1]',and 'x[i+2]', are equal to the combination, i.e. 'l0', 'l1', and 'l2', 
+                        the frequency is increased.*/
                         f++;
                     }        
                 }
                 if (f > m) {
-                    m = f;
-                    y[0] = l0; y[1] = l1; y[2] = l2;
-                    i++;
+                    /* If the frequency of the current combination is greater than the previous, then it is updated.*/
+                    m = f; //updating the highest frequency 
+                    y[0] = l0; y[1] = l1; y[2] = l2; //updating both the letters of the most common bigram yet.
+                    i++; //updating the count of assignments
                 }   
             }     
         }
@@ -655,13 +671,14 @@ int trigram(char *x, char *y) {
  * Description: calculates the frequency of a character in a string
  */
 int frequency(char *x, char y) {
-    int f = 0; //'f' for frequency
+    int f = 0; //'f' for frequency (not flag)
     int n; n = strlen(x); //'n' for length
+    //The FOR-loop goes through every character, i.e. element of the string 'x'. This character is 'x[i]', and the integer 'i' is between 0, and 'n'.
     for (int i = 0; i < n; i++) {
         if (x[i] == y)
-            f++;
+            f++; //If the current character is the target character, then the frequency is increased.
     }
-    return f;    
+    return f; //returning the frequency (not flag)
 }
 
 
