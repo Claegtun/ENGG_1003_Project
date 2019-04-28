@@ -20,7 +20,7 @@ int main()
     char setting[1]; //the character defining the setting as a header 
     int S; //the setting of the action
     char word[100]; //a word from the text
-    char text[10000] = ""; //the text
+    char text[100000] = ""; //the text
     //Temporary data
     char buffer[100]; 
     char buffer1[100];
@@ -186,7 +186,8 @@ int main()
             }
             //With the chosen key by the above testing with the highest percentage, the text is then fully decrypted.
             fseek(input, 1, SEEK_SET); //beginning the cursor
-            r = 26 - (int)(cL - B); //A rotator for decryption is made by the difference between the most common letter found and the predicted corresponding letter
+            r = (26 - (int)(cL - B)) % 26; //A rotator for decryption is made by the difference between the most common letter found and the predicted corresponding letter
+            //The modulo with 26 is, if it goes over 26; this is more for display-purposes.
             printf("*detected by list.txt\n"); fprintf(output, "*detected by list.txt\n");
             printf("Chosen letter and rotator by freuqency: %c %d\n", B, r); fprintf(output, "Chosen letter and rotator by freuqency: %c %d\n", B, r);
             printf(">>>--------->\n"); fprintf(output, ">>>--------->\n");//divider

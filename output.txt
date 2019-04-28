@@ -7,17 +7,20 @@ S: Action:									Notes:
 5  Substitutional decryption without key	Nothing is to follow except the cipher
 >>>--------->
 Setting: 5 i.e. Substitutional decrytion without key
-Most common letter found: F
+Most common letter found: B
 Most common bigram: FH
-Most common trigram: BKF
-Most common repetition: I
-Beginning alphabet: _E___T____N_______________
+Most common trigram: FHB
+Beginning alphabet: _E___T_H__________________
 >>>--------->
 Decrypted text:
-_ NE_ ___ENT____ T__T_ __E_ N_T T______ __ __N__N__N_ _T_ ____NENT_ _N_ ____N_ T_E_ _EE T_E ____T, __T __T_E_ _E____E _T_ 
-____NENT_ E_ENT_____ __E, _N_ _ NE_ _ENE__T__N _____ __ T__T __ ________ __T_ _T. - ___ ___N__ 
+DID YOU EVER HEAR THE TRAGEDY OF DARTH PLAGUEIS THE WISE? I THOUGHT NOT. IT'S NOT A STORY THE JEDI WOULD TELL YOU. IT'S A SITH 
+LEGEND. DARTH PLAGUEIS WAS A DARK LORD OF THE SITH, SO POWERFUL AND SO WISE HE COULD USE THE FORCE TO INFLUENCE THE MIDICHLORIANS 
+TO CREATE LIFE… HE HAD SUCH A KNOWLEDGE OF THE DARK SIDE THAT HE COULD EVEN KEEP THE ONES HE CARED ABOUT FROM DYING. THE DARK 
+SIDE OF THE FORCE IS A PATHWAY TO MANY ABILITIES SOME CONSIDER TO BE UNNATURAL. HE BECAME SO POWERFUL… THE ONLY THING HE 
+WAS AFRAID OF WAS LOSING HIS POWER, WHICH EVENTUALLY, OF COURSE, HE DID. UNFORTUNATELY, HE TAUGHT HIS APPRENTICE EVERYTHING 
+HE KNEW, THEN HIS APPRENTICE KILLED HIM IN HIS SLEEP. IRONIC. HE COULD SAVE OTHERS FROM DEATH, BUT NOT HIMSELF. 
 >>>--------->
-Number of total words: 38
-Number of incomplete words: 37
-Success: 2.631579%
-Final alphabet: _E___T____N_______________
+Number of total words: 138
+Number of incomplete words: 0
+Success: 100.000000%
+Final alphabet: KEIJUTVHPSNCFAMWGD___YBROL

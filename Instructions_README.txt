@@ -17,7 +17,8 @@ Notes:
 have a less common letter, e.g. 'Z', may return as incomplete. This is why the 'success' of the decryption is given and the underscores are kept.
 - For the output, punctuation and any non-Latin letters are untouched. For the input, case is irrelevant, whilst whitespaces are relevant!
 - There is an 'alternative-list.txt', which was utilised for testing.
-- The 'input' file must not have more than 100000 words, and a word must not have more than 100 characters.
+- The 'input' file must not have more than 100000 characters not including spaces, and must not have more than 2147483647 words, and a word must not have more 
+than 100 characters.
 - if the 'input' file is empty, an error-message will occur.
 Credits:
 - This was made by Clayton John Carlon in 2019 at the University of Newcastle.
